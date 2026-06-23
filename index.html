@@ -1,1 +1,167 @@
-test
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WNS Studio — Game Design Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+:root {
+  --bg:   #12101F;
+  --bg2:  #1C1930;
+  --bg3:  #252240;
+  --text: #F0EBE3;
+  --mute: #8A8599;
+  --ink:  #23203A;
+}
+body {
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Space Grotesk',sans-serif;
+  min-height:100vh;
+  padding:48px 24px 72px;
+}
+.site-header { text-align:center; margin-bottom:52px; }
+.studio-tag {
+  font-size:0.7rem; font-weight:700; letter-spacing:0.24em;
+  text-transform:uppercase; color:var(--mute); margin-bottom:10px;
+}
+.site-title {
+  font-family:'Archivo Black',sans-serif;
+  font-size:2.6rem; letter-spacing:0.06em; line-height:1;
+}
+.site-sub { font-size:0.88rem; color:var(--mute); margin-top:10px; }
+.game-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:18px; max-width:980px; margin:0 auto;
+}
+.game-card {
+  background:var(--bg2); border:2px solid var(--bg3);
+  border-radius:16px; overflow:hidden;
+  display:flex; flex-direction:column;
+  transition:transform 0.15s, border-color 0.15s;
+}
+.game-card:hover { transform:translateY(-5px); border-color:var(--accent); }
+.card-accent { height:6px; background:var(--accent); }
+.card-body { padding:22px; flex:1; display:flex; flex-direction:column; }
+.card-tags { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+.tag {
+  font-size:0.6rem; font-weight:700; letter-spacing:0.12em;
+  text-transform:uppercase; padding:3px 8px; border-radius:4px;
+}
+.tag.players { background:rgba(255,255,255,0.08); color:var(--accent); }
+.tag.genre   { background:var(--bg3); color:var(--mute); }
+.card-title {
+  font-family:'Archivo Black',sans-serif; font-size:1.65rem;
+  letter-spacing:0.1em; color:var(--accent);
+  text-shadow:3px 3px 0 rgba(0,0,0,0.35);
+  margin-bottom:8px; line-height:1.1;
+}
+.card-desc {
+  font-size:0.84rem; line-height:1.6;
+  color:var(--mute); flex:1; margin-bottom:20px;
+}
+.card-play {
+  display:inline-flex; align-items:center; gap:6px;
+  background:var(--accent); color:var(--ink);
+  font-family:'Archivo Black',sans-serif;
+  font-size:0.82rem; letter-spacing:0.08em;
+  padding:10px 18px; border-radius:8px;
+  text-decoration:none; align-self:flex-start;
+  transition:opacity 0.15s;
+}
+.card-play:hover { opacity:0.85; }
+.footer {
+  text-align:center; margin-top:60px;
+  font-size:0.72rem; color:var(--mute); letter-spacing:0.08em;
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="studio-tag">WNS Studio &nbsp;&middot;&nbsp; Game Design Studio</div>
+  <div class="site-title">GAME LIBRARY</div>
+  <div class="site-sub">Click any game below to open the classroom demo</div>
+</header>
+
+<div class="game-grid">
+
+  <div class="game-card" style="--accent:#FFB627">
+    <div class="card-accent"></div>
+    <div class="card-body">
+      <div class="card-tags">
+        <span class="tag players">3&ndash;5 Players</span>
+        <span class="tag genre">Drafting</span>
+        <span class="tag genre">Strategy</span>
+      </div>
+      <div class="card-title">HAWKER ROW</div>
+      <div class="card-desc">Draft ingredients, build recipes, and race customers down the lane before your rivals do. A full strategy game with feedback loops, player interaction, and secret specialties.</div>
+      <a class="card-play" href="hawker-row.html">Play Demo &rarr;</a>
+    </div>
+  </div>
+
+  <div class="game-card" style="--accent:#6C3FC9">
+    <div class="card-accent"></div>
+    <div class="card-body">
+      <div class="card-tags">
+        <span class="tag players">2&ndash;6 Players</span>
+        <span class="tag genre">Speed</span>
+        <span class="tag genre">Matching</span>
+      </div>
+      <div class="card-title">FIZZLE</div>
+      <div class="card-desc">Race to spot matching potions &mdash; but the matching rule lives on a flipping recipe card. Call FIZZLE if you think no match exists. Fast, chaotic, and great for exploring rule design.</div>
+      <a class="card-play" href="fizzle.html">Play Demo &rarr;</a>
+    </div>
+  </div>
+
+  <div class="game-card" style="--accent:#3BB8DE">
+    <div class="card-accent"></div>
+    <div class="card-body">
+      <div class="card-tags">
+        <span class="tag players">2&ndash;5 Players</span>
+        <span class="tag genre">Push Your Luck</span>
+        <span class="tag genre">Scoring</span>
+      </div>
+      <div class="card-title">QUIX</div>
+      <div class="card-desc">Cross off numbers in order across four color rows while racing other players. A push-your-luck classic that shows how simple rules create surprisingly rich decisions.</div>
+      <a class="card-play" href="quix.html">Play Demo &rarr;</a>
+    </div>
+  </div>
+
+  <div class="game-card" style="--accent:#FF6B35">
+    <div class="card-accent"></div>
+    <div class="card-body">
+      <div class="card-tags">
+        <span class="tag players">3&ndash;5 Players</span>
+        <span class="tag genre">Push Your Luck</span>
+        <span class="tag genre">Bluffing</span>
+      </div>
+      <div class="card-title">NO GRACIAS</div>
+      <div class="card-desc">Pass the card or pay a chip &mdash; but chips subtract from your score. A masterclass in tension and temptation built on almost zero rules. Lowest score wins.</div>
+      <a class="card-play" href="no-gracias.html">Play Demo &rarr;</a>
+    </div>
+  </div>
+
+  <div class="game-card" style="--accent:#E0379B">
+    <div class="card-accent"></div>
+    <div class="card-body">
+      <div class="card-tags">
+        <span class="tag players">2&ndash;8 Players</span>
+        <span class="tag genre">Speed</span>
+        <span class="tag genre">Spotting</span>
+      </div>
+      <div class="card-title">SPOT ONE</div>
+      <div class="card-desc">Every two cards share exactly one matching symbol &mdash; spot it first to win the round. A lightning-fast game that teaches projective plane geometry without students knowing it.</div>
+      <a class="card-play" href="spot-one.html">Play Demo &rarr;</a>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">WNS Studio &nbsp;&middot;&nbsp; Game Design Studio &nbsp;&middot;&nbsp; More games added each term</div>
+
+</body>
+</html>
