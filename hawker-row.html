@@ -32,6 +32,7 @@ body {
 }
 .disp { font-family:'Lilita One', sans-serif; }
 
+/* ── HEADER ── */
 .header { text-align:center; margin-bottom:16px; }
 .header-logo {
   font-family:'Lilita One', sans-serif; font-size:2.7rem; letter-spacing:0.1em;
@@ -46,6 +47,7 @@ body {
 
 .wrap { max-width:980px; margin:0 auto; }
 
+/* ── STATUS BAR ── */
 .status-bar {
   display:flex; justify-content:center; gap:10px; margin-bottom:14px; flex-wrap:wrap;
 }
@@ -56,6 +58,7 @@ body {
 }
 .status-chip.phase { background:var(--crimson); border-color:var(--crimson2); color:#fff; }
 
+/* ── LANE STRIP ── */
 .lane-strip {
   display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:14px;
 }
@@ -100,6 +103,7 @@ body {
   padding:3px 8px; border-radius:8px; border:2px solid var(--ink); letter-spacing:0.05em;
 }
 
+/* ── MAIN PANEL ── */
 .main-panel {
   background:var(--night2); border:3px solid var(--lantern); border-radius:16px;
   box-shadow:0 6px 0 rgba(0,0,0,0.3); padding:18px; margin-bottom:14px;
@@ -111,6 +115,7 @@ body {
 }
 .panel-msg { text-align:center; font-size:0.86rem; opacity:0.85; margin-bottom:14px; line-height:1.5; }
 
+/* hand / draft cards */
 .hand-row { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
 .ing-card {
   width:78px; height:96px; border-radius:10px; border:3px solid var(--ink);
@@ -122,6 +127,7 @@ body {
 .ing-card .ic-emoji { font-size:1.9rem; }
 .ing-card .ic-name { font-size:0.62rem; font-weight:800; text-align:center; text-transform:uppercase; }
 
+/* cook target buttons */
 .cook-targets { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:6px; }
 .cook-target {
   width:130px; border-radius:10px; border:3px solid var(--ink); background:var(--cream);
@@ -134,6 +140,7 @@ body {
 .ct-title { font-family:'Lilita One',sans-serif; font-size:0.72rem; margin-bottom:5px; }
 .ct-cards { display:flex; gap:2px; justify-content:center; font-size:1rem; min-height:22px; }
 
+/* customer card */
 .customer-card {
   width:200px; margin:0 auto 14px; background:var(--cream); color:var(--ink);
   border:3px solid var(--crimson); border-radius:14px; box-shadow:4px 4px 0 rgba(0,0,0,0.4);
@@ -162,6 +169,7 @@ body {
   text-align:center; font-size:0.8rem; opacity:0.6; font-style:italic;
 }
 
+/* ── LOG ── */
 .log-panel {
   background:rgba(0,0,0,0.25); border:2px solid var(--night3); border-radius:12px;
   padding:10px 14px; font-size:0.76rem; line-height:1.6; max-height:120px;
@@ -170,6 +178,7 @@ body {
 .log-panel div { opacity:0.9; border-bottom:1px solid rgba(255,255,255,0.06); padding:3px 0; }
 .log-panel div:last-child { color:var(--lantern2); font-weight:700; }
 
+/* ── DECK STATS ── */
 .stat-row {
   display:flex; justify-content:center; gap:14px; margin-bottom:14px; flex-wrap:wrap;
 }
@@ -178,8 +187,10 @@ body {
   background:rgba(255,255,255,0.05); padding:5px 12px; border-radius:14px;
 }
 
+/* ── CONTROLS ── */
 .controls-row { display:flex; justify-content:center; gap:10px; margin-bottom:16px; }
 
+/* ── BIG SIX STRIP ── */
 .bigsix {
   background:var(--night2); border:2px solid var(--night3); border-radius:12px;
   padding:13px 16px; font-size:0.74rem; line-height:1.6;
@@ -191,6 +202,7 @@ body {
 }
 .bigsix span.lbl { color:var(--lantern2); font-weight:800; }
 
+/* ── GAME OVER ── */
 .gameover { display:none; position:fixed; inset:0; background:rgba(10,8,20,0.85);
   z-index:100; align-items:center; justify-content:center; padding:20px; }
 .gameover.show { display:flex; }
@@ -212,7 +224,6 @@ body {
 @keyframes fadeIn { from{opacity:0; transform:scale(0.95);} to{opacity:1; transform:scale(1);} }
 .main-panel { animation:fadeIn 0.25s ease; }
 
-/* ── RECIPE MENU ── */
 .recipe-menu {
   background:var(--night2); border:2px solid var(--lantern); border-radius:14px;
   padding:11px 14px; margin-bottom:14px;
@@ -291,15 +302,15 @@ body {
   <div class="stat-row" id="statRow"></div>
 
   <div class="controls-row">
-    <button class="btn btn-new" onclick="newGame()">&#8634; New Game</button>
+    <button class="btn btn-new" onclick="newGame()">↺ New Game</button>
   </div>
 
   <div class="bigsix">
-    <span class="bh">&middot; Spot the Big Six &middot;</span>
+    <span class="bh">· Spot the Big Six ·</span>
     <span><span class="lbl">Core Mechanic:</span> draft-and-cook.</span>
     <span><span class="lbl">Risk/Reward:</span> snack now vs. dish later.</span>
-    <span><span class="lbl">Feedback Loop:</span> selling moves you toward Stall 1 &mdash; and Stall 1 sells first.</span>
-    <span><span class="lbl">Randomness vs Skill:</span> deals &amp; customers vs. drafting &amp; lane position.</span>
+    <span><span class="lbl">Feedback Loop:</span> selling moves you toward Stall 1 — and Stall 1 sells first.</span>
+    <span><span class="lbl">Randomness vs Skill:</span> deals & customers vs. drafting & lane position.</span>
     <span><span class="lbl">Player Agency:</span> every card, every counter, sell-or-pass.</span>
     <span><span class="lbl">Replayability:</span> shuffled customers + secret specialties.</span>
   </div>
@@ -316,6 +327,9 @@ body {
 </div>
 
 <script>
+// ══════════════════════════════════════════════════════
+//  GAME DATA  (faithful to HawkerRow_Rulebook.pdf)
+// ══════════════════════════════════════════════════════
 const ING_INFO = {
   noodles: {name:'Noodles', emoji:'🍜'},
   broth:   {name:'Broth',   emoji:'🥣'},
@@ -328,10 +342,10 @@ const ING_INFO = {
 
 const RECIPES = [
   {name:'Hawker Row Noodles', ings:['noodles','broth','veggies'], price:7},
-  {name:'Fire Ramen',         ings:['noodles','broth','chili'],   price:8},
-  {name:'Sizzling Skewers',   ings:['meat','veggies','chili'],    price:8},
-  {name:'Dragon Rice Bowl',   ings:['rice','meat','chili'],       price:8},
-  {name:'Steamed Dumplings',  ings:['meat','veggies','rice'],     price:7},
+  {name:'Fire Ramen',           ings:['noodles','broth','chili'],   price:8},
+  {name:'Sizzling Skewers',     ings:['meat','veggies','chili'],    price:8},
+  {name:'Dragon Rice Bowl',     ings:['rice','meat','chili'],       price:8},
+  {name:'Steamed Dumplings',    ings:['meat','veggies','rice'],     price:7},
 ];
 
 const CUSTOMER_TYPES = [
@@ -359,6 +373,9 @@ const SPECIALTIES = [
 function customerInfo(key){ return CUSTOMER_TYPES.find(c=>c.key===key); }
 function customerName(key){ return customerInfo(key).name; }
 
+// ══════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════
 let ST = {};
 
 function shuffle(arr){
@@ -406,6 +423,7 @@ function freshGame(){
     pendingHumanSale: null,
     inRushHour:false,
     rushHourDone:false,
+    finalResults:null,
   };
 }
 
@@ -416,6 +434,9 @@ function newGame(){
   renderAll();
 }
 
+// ══════════════════════════════════════════════════════
+//  RULES ENGINE — recipe matching (wild = any 1 missing ingredient)
+// ══════════════════════════════════════════════════════
 function findCompletedRecipe(counter){
   if (counter.length !== 3) return null;
   const nonWild = counter.filter(c=>c!=='wild');
@@ -453,6 +474,9 @@ function dealHands(){
   }
 }
 
+// ══════════════════════════════════════════════════════
+//  AI LOGIC
+// ══════════════════════════════════════════════════════
 function aiCardScore(p, card){
   let best = 0;
   p.counters.forEach(counter => {
@@ -514,6 +538,9 @@ function aiSellDecision(elig){
   return 'pass';
 }
 
+// ══════════════════════════════════════════════════════
+//  TURN FLOW — DRAFT
+// ══════════════════════════════════════════════════════
 function passHands(direction){
   const n = ST.players.length;
   const hands = ST.players.map(p=>p.hand);
@@ -561,6 +588,9 @@ function humanDraft(cardIdx){
   startCookPhase();
 }
 
+// ══════════════════════════════════════════════════════
+//  TURN FLOW — COOK
+// ══════════════════════════════════════════════════════
 function startCookPhase(){
   ST.phase = 'cook';
   for (let i=1;i<ST.players.length;i++){
@@ -591,6 +621,9 @@ function humanCook(target){
   setTimeout(()=>startCustomerPhase(2), 400);
 }
 
+// ══════════════════════════════════════════════════════
+//  TURN FLOW — CUSTOMERS
+// ══════════════════════════════════════════════════════
 function startCustomerPhase(count){
   ST.phase = 'customers';
   const flipperIdx = ST.lane[ST.lane.length-1];
@@ -771,7 +804,9 @@ function resolveCritic(){
   setTimeout(nextCustomer, 1000);
 }
 
-// After each pair of customers resolves: advance turn OR end night on turn 4
+// ══════════════════════════════════════════════════════
+//  PHASE TRANSITIONS
+// ══════════════════════════════════════════════════════
 function finishCustomerPhase(){
   if (ST.inRushHour){
     ST.inRushHour = false;
@@ -806,6 +841,9 @@ function rushHour(){
   startCustomerPhase(roll);
 }
 
+// ══════════════════════════════════════════════════════
+//  GAME OVER
+// ══════════════════════════════════════════════════════
 function computeSpecialtyBonus(p, playerIdx){
   const s = p.specialty;
   if (!s) return 0;
@@ -822,7 +860,6 @@ function computeSpecialtyBonus(p, playerIdx){
 }
 
 function endGame(){
-  ST.phase = 'over';
   const results = ST.players.map((p, i) => {
     const bonus = computeSpecialtyBonus(p, i);
     return {
@@ -831,7 +868,15 @@ function endGame(){
     };
   });
   results.sort((a,b)=> b.total - a.total || a.lanePos - b.lanePos);
+  ST.finalResults = results;
+  ST.phase = 'reveal';
+  addLog('🎴 The market closes — time to flip those specialty cards!');
+  renderAll();
+}
 
+function showFinalScores(){
+  ST.phase = 'over';
+  const results = ST.finalResults;
   let html = '';
   results.forEach((r,i) => {
     html += `<div class="go-player-block ${i===0?'winner':''}">
@@ -850,6 +895,9 @@ function endGame(){
   document.getElementById('gameover').classList.add('show');
 }
 
+// ══════════════════════════════════════════════════════
+//  RENDER
+// ══════════════════════════════════════════════════════
 function renderAll(){
   renderStatusBar();
   renderLane();
@@ -865,7 +913,8 @@ function renderStatusBar(){
     return;
   }
   const phaseLabel = {draft:'DRAFT', cook:'COOK', customers:'CUSTOMERS', over:'MARKET CLOSED'}[ST.phase] || '';
-  const nightLabel = ST.inRushHour ? 'RUSH HOUR' : `Night ${ST.night} / 3`;
+  const nightLabel = ST.inRushHour || (ST.phase==='customers' && ST.night===3 && ST.turn===4 && ST.rushHourDone)
+    ? 'RUSH HOUR' : `Night ${ST.night} / 3`;
   bar.innerHTML = `
     <div class="status-chip">${nightLabel}</div>
     <div class="status-chip">Turn ${ST.turn} / 4</div>
@@ -922,7 +971,7 @@ function renderMain(){
   if (ST.phase==='draft'){
     const p = ST.players[0];
     panel.innerHTML = `
-      <div class="panel-title">Step 1 — Draft (Turn ${ST.turn} of 4)</div>
+      <div class="panel-title">Step 1 — Draft</div>
       <div class="panel-msg">Pick ONE card to draft from your hand. Everyone reveals together.</div>
       <div class="hand-row">
         ${p.hand.map((c,i)=>`
@@ -939,11 +988,11 @@ function renderMain(){
     const card = p.drafted;
     if (!card){
       panel.innerHTML = `<div class="panel-title">Step 2 — Cook</div>
-        <div class="resolving-note">Heading to customers...</div>`;
+        <div class="resolving-note">Heading to the customer line...</div>`;
       return;
     }
     panel.innerHTML = `
-      <div class="panel-title">Step 2 — Cook (Turn ${ST.turn} of 4)</div>
+      <div class="panel-title">Step 2 — Cook</div>
       <div class="panel-msg">You drafted <b>${ING_INFO[card].emoji} ${ING_INFO[card].name}</b>. Add it to a counter, or toss it in the Wok for 1 coin.</div>
       <div class="cook-targets">
         ${p.counters.map((counter, idx) => {
@@ -984,13 +1033,37 @@ function renderMain(){
       body = `<div class="resolving-note">Resolving down the lane, starting at Stall 1...</div>`;
     }
     panel.innerHTML = `
-      <div class="panel-title">Step 3 — Customers (Turn ${ST.turn} of 4)</div>
+      <div class="panel-title">Step 3 — Customers</div>
       <div class="customer-card">
         <div class="cc-emoji">${ct.emoji}</div>
         <div class="cc-name">${ct.name}</div>
         <div class="cc-rule">${ct.craves ? `Craves <b>${ING_INFO[ct.craves].name}</b>` : ct.rule}</div>
       </div>
       ${body}`;
+    return;
+  }
+
+  if (ST.phase==='reveal'){
+    const results = ST.finalResults;
+    panel.innerHTML = `
+      <div class="panel-title">🎴 Specialty Reveal!</div>
+      <div class="panel-msg">Each chef's secret agenda — and what it earned them.</div>
+      <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:16px;">
+        ${results.map(r => `
+          <div style="background:var(--cream); color:var(--ink); border:3px solid var(--ink);
+               border-radius:12px; padding:12px 10px; width:160px; text-align:center;
+               box-shadow:3px 3px 0 rgba(0,0,0,0.35);">
+            <div style="font-family:'Lilita One',sans-serif; font-size:0.88rem; margin-bottom:5px;">${r.name}</div>
+            <div style="font-family:'Lilita One',sans-serif; font-size:0.75rem; color:var(--crimson); margin-bottom:4px;">${r.specialty.name}</div>
+            <div style="font-size:0.6rem; line-height:1.45; opacity:0.72; margin-bottom:8px;">${r.specialty.rule}</div>
+            <div style="font-weight:800; font-size:0.8rem; color:${r.bonus>0?'var(--goldk)':'rgba(43,36,64,0.4)'};">
+              ${r.bonus>0 ? '+'+r.bonus+' coins!' : 'Not triggered'}
+            </div>
+          </div>`).join('')}
+      </div>
+      <div style="text-align:center;">
+        <button class="btn btn-begin" onclick="showFinalScores()">Count the Coins &#8594;</button>
+      </div>`;
     return;
   }
 
@@ -1018,8 +1091,13 @@ function renderStats(){
   `;
 }
 
-function addLog(msg){ ST.log.push(msg); }
+function addLog(msg){
+  ST.log.push(msg);
+}
 
+// ══════════════════════════════════════════════════════
+//  START
+// ══════════════════════════════════════════════════════
 function beginService(){
   dealHands();
   startDraftPhase();
