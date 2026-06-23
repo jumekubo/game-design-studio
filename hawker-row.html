@@ -211,6 +211,32 @@ body {
 
 @keyframes fadeIn { from{opacity:0; transform:scale(0.95);} to{opacity:1; transform:scale(1);} }
 .main-panel { animation:fadeIn 0.25s ease; }
+
+/* ── RECIPE MENU ── */
+.recipe-menu {
+  background:var(--night2); border:2px solid var(--lantern); border-radius:14px;
+  padding:11px 14px; margin-bottom:14px;
+}
+.recipe-menu-title {
+  font-family:'Lilita One', sans-serif; font-size:0.72rem; color:var(--lantern2);
+  letter-spacing:0.12em; text-align:center; margin-bottom:8px; text-transform:uppercase;
+}
+.recipe-grid {
+  display:grid; grid-template-columns:repeat(5,1fr); gap:7px;
+}
+.recipe-item {
+  background:var(--cream); color:var(--ink); border-radius:9px; border:2px solid var(--ink);
+  padding:7px 5px; text-align:center;
+}
+.ri-name {
+  font-family:'Lilita One', sans-serif; font-size:0.56rem; line-height:1.25; margin-bottom:5px;
+}
+.ri-ings { font-size:1.15rem; letter-spacing:0.04em; margin-bottom:4px; }
+.ri-price { font-size:0.65rem; font-weight:800; color:var(--goldk); }
+.recipe-note {
+  text-align:center; font-size:0.6rem; opacity:0.55; margin-top:7px;
+  font-weight:700; letter-spacing:0.04em; color:var(--lantern2);
+}
 </style>
 </head>
 <body>
@@ -223,9 +249,45 @@ body {
 <div class="wrap">
 
   <div class="status-bar" id="statusBar"></div>
+
   <div class="lane-strip" id="laneStrip"></div>
+
+  <div class="recipe-menu">
+    <div class="recipe-menu-title">&middot; The Menu &middot;</div>
+    <div class="recipe-grid">
+      <div class="recipe-item">
+        <div class="ri-name">Hawker Row Noodles</div>
+        <div class="ri-ings">🍜🥣🥬</div>
+        <div class="ri-price">🪙 7</div>
+      </div>
+      <div class="recipe-item">
+        <div class="ri-name">Fire Ramen</div>
+        <div class="ri-ings">🍜🥣🌶️</div>
+        <div class="ri-price">🪙 8</div>
+      </div>
+      <div class="recipe-item">
+        <div class="ri-name">Sizzling Skewers</div>
+        <div class="ri-ings">🍖🥬🌶️</div>
+        <div class="ri-price">🪙 8</div>
+      </div>
+      <div class="recipe-item">
+        <div class="ri-name">Dragon Rice Bowl</div>
+        <div class="ri-ings">🍚🍖🌶️</div>
+        <div class="ri-price">🪙 8</div>
+      </div>
+      <div class="recipe-item">
+        <div class="ri-name">Steamed Dumplings</div>
+        <div class="ri-ings">🍖🥬🍚</div>
+        <div class="ri-price">🪙 7</div>
+      </div>
+    </div>
+    <div class="recipe-note">🥄 Golden Ladle = wildcard for any ingredient &nbsp;|&nbsp; 2 cards = Street Snack (+3 coins)</div>
+  </div>
+
   <div class="main-panel" id="mainPanel"></div>
+
   <div class="log-panel" id="logPanel"></div>
+
   <div class="stat-row" id="statRow"></div>
 
   <div class="controls-row">
@@ -266,10 +328,10 @@ const ING_INFO = {
 
 const RECIPES = [
   {name:'Hawker Row Noodles', ings:['noodles','broth','veggies'], price:7},
-  {name:'Fire Ramen',           ings:['noodles','broth','chili'],   price:8},
-  {name:'Sizzling Skewers',     ings:['meat','veggies','chili'],    price:8},
-  {name:'Dragon Rice Bowl',     ings:['rice','meat','chili'],       price:8},
-  {name:'Steamed Dumplings',    ings:['meat','veggies','rice'],     price:7},
+  {name:'Fire Ramen',         ings:['noodles','broth','chili'],   price:8},
+  {name:'Sizzling Skewers',   ings:['meat','veggies','chili'],    price:8},
+  {name:'Dragon Rice Bowl',   ings:['rice','meat','chili'],       price:8},
+  {name:'Steamed Dumplings',  ings:['meat','veggies','rice'],     price:7},
 ];
 
 const CUSTOMER_TYPES = [
@@ -528,13 +590,12 @@ function humanCook(target){
   setTimeout(afterCookPhase, 400);
 }
 
-// After each cook: advance turn or (on turn 4) start customer phase
 function afterCookPhase(){
   if (ST.turn < 4){
     ST.turn++;
     startDraftPhase();
   } else {
-    startCustomerPhase(2);
+    startCustomerPhase(8);
   }
 }
 
