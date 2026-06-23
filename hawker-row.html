@@ -532,7 +532,7 @@ function discardLeftovers(){
     }
     p.hand = [];
   }
-  addLog('🌙 All 4 turns done — everyone tosses their last card in the Wok for 1 coin.');
+  addLog('🌙 Night ends — everyone tosses their last card in the Wok for 1 coin.');
 }
 
 function startDraftPhase(){
@@ -587,16 +587,8 @@ function humanCook(target){
   }
   p.drafted = null;
   renderAll();
-  setTimeout(afterCookPhase, 400);
-}
-
-function afterCookPhase(){
-  if (ST.turn < 4){
-    ST.turn++;
-    startDraftPhase();
-  } else {
-    startCustomerPhase(8);
-  }
+  // Rulebook Step 3: 2 customers flip after EVERY turn (not just end of night)
+  setTimeout(()=>startCustomerPhase(2), 400);
 }
 
 function startCustomerPhase(count){
@@ -779,10 +771,14 @@ function resolveCritic(){
   setTimeout(nextCustomer, 1000);
 }
 
+// After each pair of customers resolves: advance turn OR end night on turn 4
 function finishCustomerPhase(){
   if (ST.inRushHour){
     ST.inRushHour = false;
     endGame();
+  } else if (ST.turn < 4){
+    ST.turn++;
+    startDraftPhase();
   } else {
     endNight();
   }
@@ -943,7 +939,7 @@ function renderMain(){
     const card = p.drafted;
     if (!card){
       panel.innerHTML = `<div class="panel-title">Step 2 — Cook</div>
-        <div class="resolving-note">Heading to next turn...</div>`;
+        <div class="resolving-note">Heading to customers...</div>`;
       return;
     }
     panel.innerHTML = `
@@ -970,7 +966,7 @@ function renderMain(){
   if (ST.phase==='customers'){
     if (!ST.currentCustomer){
       panel.innerHTML = `<div class="panel-title">Step 3 — Customers</div>
-        <div class="resolving-note">All customers served. Wrapping up the night...</div>`;
+        <div class="resolving-note">All customers served. Wrapping up the turn...</div>`;
       return;
     }
     const ct = customerInfo(ST.currentCustomer);
@@ -988,7 +984,7 @@ function renderMain(){
       body = `<div class="resolving-note">Resolving down the lane, starting at Stall 1...</div>`;
     }
     panel.innerHTML = `
-      <div class="panel-title">Step 3 — Customers</div>
+      <div class="panel-title">Step 3 — Customers (Turn ${ST.turn} of 4)</div>
       <div class="customer-card">
         <div class="cc-emoji">${ct.emoji}</div>
         <div class="cc-name">${ct.name}</div>
