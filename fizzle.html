@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FIZZLE — Classroom Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink:     #23203A;
+  --cream:   #FBF5E9;
+  --ember:   #FF6B35;
+  --magenta: #E0379B;
+  --violet:  #6C3FC9;
+  --emerald: #3DBD5D;
+  --pink:    #F4538A;
+  --amber:   #FFAA2B;
+  --cyan:    #3BB8DE;
+  --mint:    #BDEBD2;
+  --white:   #FFFFFF;
+}
+
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: 'Space Grotesk', sans-serif;
+  min-height: 100vh;
+  padding: 20px 24px 32px;
+  user-select: none;
+}
+
+/* ─── HEADER ─── */
+.header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.header-logo {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 3rem;
+  color: var(--violet);
+  text-shadow: 5px 5px 0 var(--ink);
+  letter-spacing: 0.12em;
+  line-height: 1;
+}
+.header-sub {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink);
+  opacity: 0.55;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* ─── MAIN LAYOUT ─── */
+.game-area {
+  display: flex;
+  gap: 28px;
+  max-width: 1100px;
+  margin: 0 auto;
+  align-items: flex-start;
+}
+
+/* ─── LEFT PANEL ─── */
+.left-panel {
+  flex: 0 0 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.recipe-card {
+  background: var(--violet);
+  border: 3px solid var(--ink);
+  box-shadow: 5px 5px 0 var(--ink);
+  border-radius: 14px;
+  padding: 20px 18px;
+  text-align: center;
+  color: var(--white);
+  position: relative;
+}
+
+.recipe-badge {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.65;
+  margin-bottom: 10px;
+}
+
+.recipe-number {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 2.8rem;
+  line-height: 1;
+  color: var(--mint);
+  text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+  margin-bottom: 2px;
+}
+
+.recipe-name {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 1.25rem;
+  letter-spacing: 0.04em;
+  margin-bottom: 14px;
+  line-height: 1.2;
+}
+
+.recipe-divider {
+  width: 40px;
+  height: 3px;
+  background: rgba(255,255,255,0.3);
+  margin: 0 auto 14px;
+  border-radius: 2px;
+}
+
+.recipe-rule {
+  font-size: 0.92rem;
+  line-height: 1.6;
+  opacity: 0.92;
+  font-weight: 500;
+}
+
+.recipe-nav {
+  display: flex;
+  gap: 8px;
+}
+
+/* ─── BUTTONS ─── */
+.btn {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  padding: 10px 14px;
+  border: 3px solid var(--ink);
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform 0.08s, box-shadow 0.08s;
+  text-transform: uppercase;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.btn:hover { filter: brightness(1.06); }
+.btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
+
+.btn-nav   { flex: 1; background: rgba(255,255,255,0.15); color: var(--white);
+             border-color: rgba(255,255,255,0.4); box-shadow: none; font-size: 0.75rem; }
+.btn-nav:active { transform: translate(1px,1px); }
+
+.btn-deal  { background: var(--emerald); color: var(--white); width: 100%; font-size: 0.85rem; }
+.btn-clear { background: var(--white); color: var(--ink); width: 100%; font-size: 0.85rem; }
+.btn-fizzle {
+  background: var(--ember);
+  color: var(--white);
+  width: 100%;
+  font-size: 1.1rem;
+  padding: 14px 18px;
+  box-shadow: 5px 5px 0 var(--ink);
+}
+
+/* ─── FEEDBACK ─── */
+.feedback {
+  background: var(--ink);
+  color: var(--cream);
+  border: 3px solid var(--ink);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  font-weight: 600;
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: background 0.25s;
+}
+.feedback.success  { background: #27894A; color: var(--white); }
+.feedback.fail     { background: var(--magenta); color: var(--white); }
+.feedback.fizzle-ok   { background: var(--ember); color: var(--white); }
+.feedback.fizzle-bad  { background: var(--violet); color: var(--white); }
+.feedback.neutral  { background: var(--ink); color: var(--cream); }
+
+/* ─── INGREDIENT KEY ─── */
+.key-panel {
+  background: var(--white);
+  border: 2.5px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+.key-title {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  opacity: 0.5;
+  margin-bottom: 8px;
+  text-align: center;
+}
+.key-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 8px;
+}
+
+/* ─── CARD GRID ─── */
+.shelf {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.shelf-label {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.4;
+  text-align: center;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+/* ─── POTION CARD ─── */
+.potion-card {
+  background: var(--cream);
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  padding: 14px 10px 10px;
+  cursor: pointer;
+  box-shadow: 5px 5px 0 var(--ink);
+  transition: transform 0.12s, box-shadow 0.12s, border-color 0.15s, background 0.15s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.potion-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 5px 8px 0 var(--ink);
+}
+
+.potion-card.selected {
+  border-color: var(--amber);
+  box-shadow: 5px 5px 0 var(--amber);
+  background: #FFFAEE;
+}
+.potion-card.selected::after {
+  content: '✓';
+  position: absolute;
+  top: 6px; right: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--amber);
+}
+
+.potion-card.match-found {
+  border-color: var(--emerald);
+  box-shadow: 5px 5px 0 var(--emerald);
+  background: #EDFFF4;
+  animation: matchPop 0.5s ease;
+}
+
+.potion-card.no-match {
+  border-color: var(--magenta);
+  box-shadow: 5px 5px 0 var(--magenta);
+  animation: shake 0.4s ease;
+}
+
+.potion-card.hint {
+  border-color: var(--cyan);
+  box-shadow: 5px 5px 0 var(--cyan);
+  background: #EEF9FF;
+}
+
+.potion-card.fizzle-confirmed {
+  opacity: 0.45;
+  filter: grayscale(0.3);
+}
+
+@keyframes matchPop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.07); }
+  70%  { transform: scale(0.97); }
+  100% { transform: scale(1); }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%  { transform: translateX(-6px); }
+  40%  { transform: translateX(6px); }
+  60%  { transform: translateX(-4px); }
+  80%  { transform: translateX(4px); }
+}
+
+.flask-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bubble-strip {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+}
+.bub {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--ink);
+}
+
+.ing-list {
+  width: 100%;
+  border-top: 2px solid rgba(35,32,58,0.15);
+  padding-top: 7px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.ing-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.67rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+}
+.ing-chip {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+.key-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">🫧 FIZZLE</div>
+  <div class="header-sub">Classroom Demo — Game Design Studio</div>
+</div>
+
+<div class="game-area">
+
+  <!-- LEFT PANEL: recipe + controls -->
+  <div class="left-panel">
+
+    <div class="recipe-card" id="recipeCard">
+      <div class="recipe-badge">&middot; Active Recipe &middot;</div>
+      <div class="recipe-number" id="recipeNum">1</div>
+      <div class="recipe-name" id="recipeName">COLOR MATCH</div>
+      <div class="recipe-divider"></div>
+      <div class="recipe-rule" id="recipeRule">Grab two potions of the same color.</div>
+
+      <div id="missingTarget" style="display:none; margin-top:14px; background:rgba(0,0,0,0.2); border-radius:10px; padding:12px 10px;">
+        <div style="font-family:'Archivo Black',sans-serif; font-size:0.6rem; letter-spacing:0.18em; text-transform:uppercase; opacity:0.7; margin-bottom:8px;">Missing Ingredient</div>
+        <div style="display:flex; align-items:center; justify-content:center; gap:10px;">
+          <button class="btn btn-nav" style="padding:6px 10px; font-size:0.8rem;" onclick="prevTargetIng()">&#8592;</button>
+          <div id="missingChip" style="display:flex; flex-direction:column; align-items:center; gap:5px;"></div>
+          <button class="btn btn-nav" style="padding:6px 10px; font-size:0.8rem;" onclick="nextTargetIng()">&#8594;</button>
+        </div>
+      </div>
+
+      <div style="margin-top:16px; display:flex; gap:8px;">
+        <button class="btn btn-nav" onclick="prevRecipe()">&#8592; Prev</button>
+        <button class="btn btn-nav" onclick="nextRecipe()">Next &#8594;</button>
+      </div>
+    </div>
+
+    <button class="btn btn-deal" onclick="dealCards()">🃏 New Deal</button>
+    <button class="btn btn-clear" onclick="clearSelection()">✕ Clear Selection</button>
+    <button class="btn btn-fizzle" onclick="callFizzle()">🫧 FIZZLE!</button>
+
+    <div class="feedback neutral" id="feedback">
+      Click two cards to test a match — or press FIZZLE! to check if no match exists.
+    </div>
+
+    <div class="key-panel">
+      <div class="key-title">Ingredient Key</div>
+      <div class="key-grid" id="ingKey"></div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT: card shelf -->
+  <div class="shelf">
+    <div class="shelf-label">&middot; The Shelf &middot; 9 Potions &middot;</div>
+    <div class="card-grid" id="cardGrid"></div>
+  </div>
+
+</div>
+
+<script>
+const COLORS = {
+  emerald: { name: "Emerald", hex: "#3DBD5D" },
+  pink:    { name: "Pink",    hex: "#F4538A" },
+  amber:   { name: "Amber",   hex: "#FFAA2B" },
+  cyan:    { name: "Cyan",    hex: "#3BB8DE" },
+};
+const COLOR_KEYS = ["emerald","pink","amber","cyan"];
+
+const INGS = {
+  newt:   { name: "Newt Eye",    hex: "#9DC93B" },
+  dew:    { name: "Moon Dew",    hex: "#4178D6" },
+  ember:  { name: "Ember Root",  hex: "#E8542F" },
+  star:   { name: "Stardust",    hex: "#FFC233" },
+  shroom: { name: "Toadstool",   hex: "#D63B4E" },
+  wing:   { name: "Bat Wing",    hex: "#7C4DBF" },
+};
+const ING_KEYS = ["newt","dew","ember","star","shroom","wing"];
+
+const RECIPES = [
+  { key: "color",   name: "COLOR MATCH",        rule: "Grab two potions of the same color.",                                          check: (a,b) => a.color === b.color },
+  { key: "bubble",  name: "BUBBLE MATCH",        rule: "Grab two potions with the same number of bubbles.",                           check: (a,b) => a.bubbles === b.bubbles },
+  { key: "share1",  name: "SHARED INGREDIENT",   rule: "Grab two potions whose labels share an ingredient.",                          check: (a,b) => a.ings.some(i => b.ings.includes(i)) },
+  { key: "share2",  name: "DOUBLE DOSE",         rule: "Grab two potions whose labels share TWO ingredients.",                        check: (a,b) => a.ings.filter(i => b.ings.includes(i)).length >= 2 },
+  { key: "missing", name: "MISSING MATCH",       rule: "Grab two potions that are BOTH missing the same ingredient from their labels.", check: (a,b) => { const mA=ING_KEYS.filter(i=>!a.ings.includes(i)); const mB=ING_KEYS.filter(i=>!b.ings.includes(i)); return mA.some(i=>mB.includes(i)); } },
+  { key: "twins",   name: "TWINS",               rule: "Grab two potions with the same color AND the same number of bubbles.",        check: (a,b) => a.color === b.color && a.bubbles === b.bubbles },
+  { key: "opp",     name: "TOTAL OPPOSITES",     rule: "Grab two potions with different colors, different bubbles, and no shared ingredients.", check: (a,b) => a.color !== b.color && a.bubbles !== b.bubbles && !a.ings.some(i => b.ings.includes(i)) },
+  { key: "perfect", name: "PERFECT BREW",        rule: "Grab two potions with exactly the same three ingredients.",                   check: (a,b) => a.ings.slice().sort().join() === b.ings.slice().sort().join() },
+];
+
+let shelf = [], selected = [], recipeIdx = 0, targetIngIdx = 0, mode = "play";
+
+function pickN(arr, n) { return [...arr].sort(() => Math.random() - 0.5).slice(0, n); }
+function randomCard() { return { color: COLOR_KEYS[Math.floor(Math.random()*4)], bubbles: Math.floor(Math.random()*3)+1, ings: pickN(ING_KEYS, 3) }; }
+
+function dealCards() {
+  shelf = Array.from({length: 9}, randomCard);
+  selected = []; mode = "play";
+  setFeedback("neutral", "Click two cards to test a match — or press FIZZLE! to check if no match exists.");
+  renderShelf();
+}
+
+function nextRecipe() { recipeIdx = (recipeIdx+1)%RECIPES.length; selected=[]; mode="play"; updateRecipeCard(); setFeedback("neutral","Recipe changed. Click two cards to test a match."); renderShelf(); }
+function prevRecipe() { recipeIdx = (recipeIdx-1+RECIPES.length)%RECIPES.length; selected=[]; mode="play"; updateRecipeCard(); setFeedback("neutral","Recipe changed. Click two cards to test a match."); renderShelf(); }
+
+function updateRecipeCard() {
+  const r = RECIPES[recipeIdx];
+  document.getElementById("recipeNum").textContent = recipeIdx + 1;
+  document.getElementById("recipeName").textContent = r.name;
+  const isMissing = r.key === "missing";
+  document.getElementById("missingTarget").style.display = isMissing ? "block" : "none";
+  if (isMissing) {
+    const ingKey = ING_KEYS[targetIngIdx];
+    document.getElementById("recipeRule").textContent = "Find two potions that are BOTH missing this ingredient from their labels.";
+    document.getElementById("missingChip").innerHTML = buildChipSVG(ingKey, 40) + `<span style="font-family:'Archivo Black',sans-serif; font-size:0.75rem; letter-spacing:0.06em; color:white; margin-top:2px">${INGS[ingKey].name}</span>`;
+  } else {
+    document.getElementById("recipeRule").textContent = r.rule;
+  }
+}
+
+function prevTargetIng() { targetIngIdx=(targetIngIdx-1+ING_KEYS.length)%ING_KEYS.length; selected=[]; mode="play"; updateRecipeCard(); setFeedback("neutral","Ingredient changed."); renderShelf(); }
+function nextTargetIng() { targetIngIdx=(targetIngIdx+1)%ING_KEYS.length; selected=[]; mode="play"; updateRecipeCard(); setFeedback("neutral","Ingredient changed."); renderShelf(); }
+
+function getEffectiveCheck() {
+  const r = RECIPES[recipeIdx];
+  if (r.key === "missing") { const t = ING_KEYS[targetIngIdx]; return (a,b) => !a.ings.includes(t) && !b.ings.includes(t); }
+  return r.check;
+}
+
+function selectCard(idx) {
+  if (mode !== "play") { clearSelection(); return; }
+  if (selected.includes(idx)) { selected = selected.filter(i=>i!==idx); renderShelf(); return; }
+  if (selected.length >= 2) return;
+  selected.push(idx);
+  renderShelf();
+  if (selected.length === 2) checkMatch();
+}
+
+function clearSelection() { selected=[]; mode="play"; setFeedback("neutral","Click two cards to test a match — or press FIZZLE! to check if no match exists."); renderShelf(); }
+
+function checkMatch() {
+  mode = "result";
+  const recipe = RECIPES[recipeIdx];
+  const [i,j] = selected;
+  const isMatch = getEffectiveCheck()(shelf[i], shelf[j]);
+  const cards = document.querySelectorAll(".potion-card");
+  if (isMatch) {
+    cards[i].classList.add("match-found"); cards[j].classList.add("match-found");
+    setFeedback("success", `✓ MATCH! These two potions satisfy "${recipe.name}".`);
+  } else {
+    cards[i].classList.add("no-match"); cards[j].classList.add("no-match");
+    setFeedback("fail", `✗ Not a match for "${recipe.name}". Try again — or press FIZZLE! if you think there are none.`);
+    setTimeout(() => { if(mode==="result"){cards[i].classList.remove("no-match");cards[j].classList.remove("no-match");selected=[];mode="play";renderShelf();} }, 1200);
+  }
+}
+
+function callFizzle() {
+  const check = getEffectiveCheck();
+  const matchPairs = [];
+  for (let i=0;i<9;i++) for (let j=i+1;j<9;j++) if (check(shelf[i],shelf[j])) matchPairs.push([i,j]);
+  mode = "fizzle"; selected = [];
+  const cards = document.querySelectorAll(".potion-card");
+  if (matchPairs.length === 0) {
+    shelf.forEach((_,i)=>cards[i].classList.add("fizzle-confirmed"));
+    setFeedback("fizzle-ok", `✓ FIZZLE is correct! No valid pairs exist on this shelf for "${RECIPES[recipeIdx].name}". Deal new cards to continue.`);
+  } else {
+    const pairIndices = new Set(matchPairs.flat());
+    pairIndices.forEach(i=>cards[i].classList.add("hint"));
+    setFeedback("fizzle-bad", `✗ Wrong FIZZLE! ${matchPairs.length} valid pair${matchPairs.length>1?"s":""} exist — highlighted in blue. Find them!`);
+  }
+}
+
+const FLASK_PATH = "M -10 -78 L -10 -36 Q -10 -27 -19 -21 Q -41 -7 -41 12 Q -41 48 0 48 Q 41 48 41 12 Q 41 -7 19 -21 Q 10 -27 10 -36 L 10 -78 Z";
+const FLASK_LIQ  = "M -36.5 2 Q -38.2 6.6 -38.2 12 Q -38.2 45.2 0 45.2 Q 38.2 45.2 38.2 12 Q 38.2 6.6 36.5 2 Z";
+
+function buildFlaskSVG(colorKey, bubbles) {
+  const d = COLORS[colorKey];
+  const deepMap = { emerald:"#27894A", pink:"#C22B66", amber:"#D97E0A", cyan:"#1C84AB" };
+  const deep = deepMap[colorKey];
+  const bubSpots = { 1:[[0,-106,10]], 2:[[-13,-100,8.5],[13,-111,10]], 3:[[-19,-98,7.5],[1,-113,10],[20,-100,8.5]] };
+  let bubSVG = "";
+  for (const [bx,by,r] of bubSpots[bubbles]) {
+    const shine = `M ${bx-r*0.5} ${by-r*0.18} A ${r*0.58} ${r*0.58} 0 0 1 ${bx-r*0.1} ${by-r*0.56}`;
+    bubSVG += `<circle cx="${bx+2.4}" cy="${by+3}" r="${r}" fill="#23203A" opacity="0.15"/><circle cx="${bx}" cy="${by}" r="${r}" fill="#BDEBD2" stroke="#23203A" stroke-width="3.2"/><path d="${shine}" fill="none" stroke="white" stroke-width="2.6" stroke-linecap="round"/>`;
+  }
+  return `<svg viewBox="-55 -128 110 190" xmlns="http://www.w3.org/2000/svg" width="88" height="138">
+    <g transform="translate(5,6)" opacity="0.18"><path d="${FLASK_PATH}" fill="#23203A"/><rect x="-15" y="-88" width="30" height="11" rx="5.5" fill="#23203A"/></g>
+    <path d="${FLASK_PATH}" fill="none" stroke="#FBF5E9" stroke-width="13" stroke-linejoin="round"/>
+    <rect x="-15" y="-88" width="30" height="11" rx="5.5" fill="none" stroke="#FBF5E9" stroke-width="13"/>
+    <path d="${FLASK_PATH}" fill="white"/>
+    <path d="${FLASK_LIQ}" fill="${d.hex}"/>
+    <path d="M -36.5 2 Q 0 9.5 36.5 2" fill="none" stroke="${deep}" stroke-width="2.4"/>
+    <rect x="-26" y="12" width="7" height="22" rx="3.5" fill="white" opacity="0.55" transform="rotate(18 -22 23)"/>
+    <circle cx="-18" cy="38" r="3.4" fill="white" opacity="0.55"/>
+    <circle cx="13" cy="22" r="4.2" fill="white" opacity="0.7"/>
+    <circle cx="22" cy="33" r="2.8" fill="white" opacity="0.7"/>
+    <circle cx="2"  cy="33" r="2.2" fill="white" opacity="0.7"/>
+    <path d="${FLASK_PATH}" fill="none" stroke="#23203A" stroke-width="4" stroke-linejoin="round"/>
+    <rect x="-15" y="-88" width="30" height="11" rx="5.5" fill="white" stroke="#23203A" stroke-width="4"/>
+    ${bubSVG}
+  </svg>`;
+}
+
+const INK_C="#23203A", WHITE_C="#FFFFFF";
+function _chipBase(hex){return `<circle cx="0" cy="0" r="15" fill="${hex}"/><circle cx="0" cy="0" r="15" fill="none" stroke="${INK_C}" stroke-width="2.6"/>`;}
+const CHIP_INNER = {
+  newt:  (h)=>`${_chipBase(h)}<path d="M -9.5 0 Q 0 -7.5 9.5 0 Q 0 7.5 -9.5 0 Z" fill="${WHITE_C}" stroke="${INK_C}" stroke-width="1.8"/><circle cx="0" cy="0" r="3.6" fill="${INK_C}"/><circle cx="1.3" cy="-1.3" r="1.1" fill="${WHITE_C}"/>`,
+  dew:   (h)=>`${_chipBase(h)}<path d="M 0 -9.5 C 4.6 -3.4 7 -0.2 7 2.8 A 7 6.8 0 1 1 -7 2.8 C -7 -0.2 -4.6 -3.4 0 -9.5 Z" fill="${WHITE_C}"/><circle cx="-2.4" cy="2.6" r="1.5" fill="${h}"/>`,
+  ember: (h)=>`${_chipBase(h)}<path d="M 0.6 -9.5 C 4 -5.5 6.8 -2.5 6.8 1.5 C 6.8 6 4 9 0 9 C -4 9 -6.8 6 -6.8 1.5 C -6.8 -1 -5.6 -3 -4 -4.6 C -3.8 -2.4 -3 -1.2 -1.6 -0.6 C -2.6 -4 -1.4 -6.8 0.6 -9.5 Z" fill="${WHITE_C}"/><circle cx="0" cy="4" r="2.6" fill="${h}"/>`,
+  star:  (h)=>`${_chipBase(h)}<polygon points="0.00,-9.00 2.29,-2.56 9.13,-2.37 3.71,1.81 5.64,8.37 0.00,4.50 -5.64,8.37 -3.71,1.81 -9.13,-2.37 -2.29,-2.56" fill="${WHITE_C}" stroke="${INK_C}" stroke-width="1.4" stroke-linejoin="round"/>`,
+  shroom:(h)=>`${_chipBase(h)}<path d="M -4 1.5 L -3.2 8 Q -3 9.6 0 9.6 Q 3 9.6 3.2 8 L 4 1.5 Z" fill="${WHITE_C}"/><path d="M -9.5 1 Q -10 -2.5 -6.5 -5.8 Q -3.4 -9 0 -9 Q 3.4 -9 6.5 -5.8 Q 10 -2.5 9.5 1 Q 5 2.6 0 2.6 Q -5 2.6 -9.5 1 Z" fill="${WHITE_C}"/><circle cx="-4.6" cy="-3.4" r="1.5" fill="${h}"/><circle cx="1.4" cy="-5.6" r="1.3" fill="${h}"/><circle cx="5.4" cy="-2.2" r="1.2" fill="${h}"/>`,
+  wing:  (h)=>`${_chipBase(h)}<path d="M -1.8 -2 Q -5.6 -6.6 -9.8 -5.2 Q -8.8 -2.8 -9.6 -0.4 Q -7 -1 -6.2 1.6 Q -4 0.6 -3.2 3 Z" fill="${WHITE_C}"/><path d="M 1.8 -2 Q 5.6 -6.6 9.8 -5.2 Q 8.8 -2.8 9.6 -0.4 Q 7 -1 6.2 1.6 Q 4 0.6 3.2 3 Z" fill="${WHITE_C}"/><ellipse cx="0" cy="0.4" rx="2.4" ry="3.8" fill="${WHITE_C}"/><path d="M -1.7 -3.2 L -2.3 -5.6 L -0.8 -3.9 Z M 1.7 -3.2 L 2.3 -5.6 L 0.8 -3.9 Z" fill="${WHITE_C}"/><circle cx="-0.9" cy="-0.4" r="0.7" fill="${INK_C}"/><circle cx="0.9" cy="-0.4" r="0.7" fill="${INK_C}"/>`,
+};
+
+function buildChipSVG(key, size=22) {
+  return `<svg viewBox="-17 -17 34 34" xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" style="display:block">${CHIP_INNER[key](INGS[key].hex)}</svg>`;
+}
+
+function renderShelf() {
+  const grid = document.getElementById("cardGrid");
+  grid.innerHTML = "";
+  shelf.forEach((card, idx) => {
+    const div = document.createElement("div");
+    div.className = "potion-card" + (selected.includes(idx) ? " selected" : "");
+    div.onclick = () => selectCard(idx);
+    const colorBar = document.createElement("div");
+    colorBar.style.cssText = `width:100%;height:5px;border-radius:4px;background:${COLORS[card.color].hex};border:1.5px solid #23203A;margin-bottom:2px;`;
+    div.appendChild(colorBar);
+    const flaskWrap = document.createElement("div");
+    flaskWrap.className = "flask-wrap";
+    flaskWrap.innerHTML = buildFlaskSVG(card.color, card.bubbles);
+    div.appendChild(flaskWrap);
+    const colorTag = document.createElement("div");
+    colorTag.style.cssText = `font-family:'Archivo Black',sans-serif;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:${COLORS[card.color].hex};-webkit-text-stroke:0.5px #23203A;`;
+    colorTag.textContent = COLORS[card.color].name;
+    div.appendChild(colorTag);
+    const ingList = document.createElement("div");
+    ingList.className = "ing-list";
+    card.ings.forEach(key => {
+      const row = document.createElement("div");
+      row.className = "ing-row";
+      row.innerHTML = `<span class="ing-chip">${buildChipSVG(key,20)}</span>${INGS[key].name}`;
+      ingList.appendChild(row);
+    });
+    div.appendChild(ingList);
+    grid.appendChild(div);
+  });
+}
+
+function setFeedback(cls, msg) { const el=document.getElementById("feedback"); el.className="feedback "+cls; el.textContent=msg; }
+
+function buildIngKey() {
+  const grid = document.getElementById("ingKey");
+  ING_KEYS.forEach(key => {
+    const item = document.createElement("div");
+    item.className = "key-item";
+    item.innerHTML = `${buildChipSVG(key,24)}<span style="font-size:0.7rem;font-weight:600">${INGS[key].name}</span>`;
+    grid.appendChild(item);
+  });
+}
+
+buildIngKey();
+updateRecipeCard();
+dealCards();
+</script>
+</body>
+</html>
