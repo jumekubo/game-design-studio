@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NO GRACIAS — Classroom Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+:root {
+  --ink:     #23203A;
+  --cream:   #FBF5E9;
+  --ember:   #FF6B35;
+  --violet:  #6C3FC9;
+  --emerald: #3DBD5D;
+  --pink:    #E0379B;
+  --amber:   #FFAA2B;
+  --cyan:    #3BB8DE;
+  --gold:    #FFB627;
+}
+
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: 'Space Grotesk', sans-serif;
+  min-height: 100vh;
+  padding: 20px 24px 40px;
+  user-select: none;
+}
+
+.header { text-align:center; margin-bottom:22px; }
+.header-logo {
+  font-family:'Archivo Black',sans-serif;
+  font-size:3rem; line-height:1; letter-spacing:0.18em;
+  color:var(--ink); text-shadow:5px 5px 0 var(--ember);
+}
+.header-sub {
+  font-size:0.82rem; font-weight:600; opacity:0.5;
+  letter-spacing:0.14em; text-transform:uppercase; margin-top:4px;
+}
+
+.game-area {
+  display:flex; gap:26px; max-width:960px; margin:0 auto; align-items:flex-start;
+}
+
+.left-panel { flex:0 0 210px; display:flex; flex-direction:column; gap:12px; }
+
+.scoreboard {
+  background:var(--ink); color:var(--cream);
+  border:3px solid var(--ink); box-shadow:5px 5px 0 var(--ink);
+  border-radius:14px; padding:14px; overflow:hidden;
+}
+.sb-title {
+  font-family:'Archivo Black',sans-serif; font-size:0.6rem;
+  letter-spacing:0.22em; text-transform:uppercase; opacity:0.55;
+  margin-bottom:10px; text-align:center;
+}
+.sb-row {
+  display:flex; align-items:center; gap:8px;
+  padding:8px 10px; border-radius:8px; margin-bottom:5px;
+  transition:background 0.2s;
+}
+.sb-row:last-child { margin-bottom:0; }
+.sb-row.active { background:rgba(255,255,255,0.12); }
+.sb-name {
+  font-family:'Archivo Black',sans-serif; font-size:0.82rem;
+  flex:1; letter-spacing:0.04em;
+}
+.sb-chips {
+  display:flex; align-items:center; gap:4px;
+  font-size:0.72rem; font-weight:700;
+}
+.chip-dot {
+  width:10px; height:10px; border-radius:50%;
+  background:var(--gold); border:1.5px solid var(--ink); flex-shrink:0;
+}
+.sb-score {
+  font-family:'Archivo Black',sans-serif; font-size:1rem;
+  min-width:28px; text-align:right;
+}
+.sb-score.neg { color:#6CFFA0; }
+.turn-arrow {
+  font-size:0.7rem; opacity:0; transition:opacity 0.2s;
+}
+.sb-row.active .turn-arrow { opacity:1; }
+
+.deck-box {
+  background:#fff; border:2.5px solid var(--ink);
+  box-shadow:3px 3px 0 var(--ink); border-radius:10px;
+  padding:12px 14px; text-align:center;
+}
+.deck-count {
+  font-family:'Archivo Black',sans-serif; font-size:2rem; line-height:1;
+}
+.deck-label {
+  font-size:0.7rem; font-weight:600; opacity:0.55;
+  text-transform:uppercase; letter-spacing:0.12em; margin-top:2px;
+}
+
+.rules-box {
+  background:#fff; border:2.5px solid var(--ink);
+  box-shadow:3px 3px 0 var(--ink); border-radius:10px;
+  padding:13px; font-size:0.76rem; line-height:1.6; font-weight:500;
+}
+.rules-box .rh {
+  font-family:'Archivo Black',sans-serif; font-size:0.68rem;
+  letter-spacing:0.1em; text-transform:uppercase; color:var(--ember);
+  display:block; margin-bottom:5px;
+}
+.rules-box ul { padding-left:14px; }
+.rules-box li { margin-bottom:3px; }
+
+.main-area { flex:1; display:flex; flex-direction:column; gap:14px; }
+
+.card-stage {
+  display:flex; flex-direction:column; align-items:center; gap:14px;
+}
+
+.card-wrap { display:flex; align-items:center; gap:24px; justify-content:center; }
+.center-card {
+  width:140px; height:196px; border-radius:16px;
+  border:4px solid var(--ink); box-shadow:7px 7px 0 var(--ink);
+  background:var(--cream); display:flex; flex-direction:column;
+  align-items:center; justify-content:center; position:relative;
+  transition:transform 0.15s;
+}
+.center-card.low  { background:#EBF9F0; }
+.center-card.mid  { background:#FFF8E8; }
+.center-card.high { background:#FFF0EE; }
+.card-number {
+  font-family:'Archivo Black',sans-serif; font-size:4rem; line-height:1;
+}
+.card-number.low  { color:#27AE60; }
+.card-number.mid  { color:#E67E22; }
+.card-number.high { color:#E74C3C; }
+.card-range {
+  font-size:0.65rem; font-weight:700; opacity:0.4;
+  letter-spacing:0.12em; text-transform:uppercase; margin-top:4px;
+}
+.card-chip-label {
+  position:absolute; top:8px; right:10px;
+  font-family:'Archivo Black',sans-serif; font-size:0.6rem;
+  letter-spacing:0.1em; text-transform:uppercase; opacity:0.4;
+}
+
+.chip-pile-wrap {
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+}
+.chip-pile {
+  display:flex; flex-wrap:wrap; gap:4px;
+  max-width:120px; justify-content:center;
+}
+.chip {
+  width:20px; height:20px; border-radius:50%;
+  background:var(--gold); border:2.5px solid var(--ink);
+  box-shadow:2px 2px 0 var(--ink);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Archivo Black',sans-serif; font-size:0.55rem;
+  color:var(--ink);
+}
+.chip-overflow {
+  font-family:'Archivo Black',sans-serif; font-size:0.75rem;
+  color:var(--ink); opacity:0.6;
+}
+.chip-pile-count {
+  font-family:'Archivo Black',sans-serif; font-size:0.68rem;
+  letter-spacing:0.1em; text-transform:uppercase; opacity:0.5;
+}
+
+.action-btns { display:flex; gap:12px; justify-content:center; }
+.btn {
+  font-family:'Archivo Black',sans-serif; font-size:0.9rem;
+  letter-spacing:0.06em; padding:14px 24px;
+  border:3px solid var(--ink); border-radius:10px;
+  cursor:pointer; box-shadow:5px 5px 0 var(--ink);
+  transition:transform 0.08s, box-shadow 0.08s;
+  text-transform:uppercase;
+}
+.btn:hover:not(:disabled) { filter:brightness(1.06); }
+.btn:active:not(:disabled) { transform:translate(2px,2px); box-shadow:3px 3px 0 var(--ink); }
+.btn:disabled { opacity:0.4; cursor:not-allowed; }
+.btn-pass { background:var(--cream); color:var(--ink); }
+.btn-take { background:var(--ember); color:#fff; }
+.btn-new  { background:var(--violet); color:#fff; font-size:0.78rem; padding:11px 14px; width:100%; }
+
+.feedback {
+  background:var(--ink); color:var(--cream);
+  border:3px solid var(--ink); border-radius:10px;
+  padding:12px 16px; font-size:0.86rem; font-weight:600;
+  text-align:center; line-height:1.5; min-height:52px;
+  display:flex; align-items:center; justify-content:center;
+  transition:background 0.2s;
+}
+.feedback.success { background:#27894A; color:#fff; }
+.feedback.fail    { background:var(--pink); color:#fff; }
+.feedback.ai      { background:var(--violet); color:#fff; }
+.feedback.winner  { background:var(--gold); color:var(--ink); }
+
+.player-bar {
+  display:flex; align-items:center; gap:10px;
+  background:#fff; border:2.5px solid var(--ink);
+  box-shadow:3px 3px 0 var(--ink); border-radius:10px;
+  padding:10px 14px;
+}
+.pb-label {
+  font-family:'Archivo Black',sans-serif; font-size:0.65rem;
+  letter-spacing:0.12em; text-transform:uppercase; opacity:0.5;
+  flex-shrink:0;
+}
+.pb-chips { display:flex; align-items:center; gap:4px; flex:1; }
+.pb-score-wrap { text-align:right; flex-shrink:0; }
+.pb-score-val {
+  font-family:'Archivo Black',sans-serif; font-size:1.3rem; line-height:1;
+}
+.pb-score-label { font-size:0.65rem; opacity:0.5; text-transform:uppercase; letter-spacing:0.1em; }
+
+.hand-area {
+  background:#fff; border:2.5px solid var(--ink);
+  box-shadow:3px 3px 0 var(--ink); border-radius:12px;
+  padding:14px;
+}
+.hand-title {
+  font-family:'Archivo Black',sans-serif; font-size:0.62rem;
+  letter-spacing:0.16em; text-transform:uppercase; opacity:0.45;
+  margin-bottom:10px;
+}
+.runs-row { display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end; min-height:90px; }
+.run-group { display:flex; flex-direction:column; align-items:center; gap:4px; }
+.run-cards { display:flex; gap:3px; }
+.hand-card {
+  width:44px; height:62px; border-radius:8px;
+  border:2.5px solid var(--ink); display:flex; align-items:center;
+  justify-content:center; font-family:'Archivo Black',sans-serif;
+  font-size:1.1rem; box-shadow:3px 3px 0 var(--ink);
+}
+.hand-card.in-run { background:#EBF9F0; }
+.hand-card.solo   { background:var(--cream); }
+.run-score {
+  font-size:0.65rem; font-weight:700; opacity:0.55;
+  text-align:center; letter-spacing:0.06em;
+}
+.hand-empty {
+  font-size:0.8rem; opacity:0.4; font-weight:600;
+  font-style:italic; align-self:center; padding:8px;
+}
+
+.gameover-overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(35,32,58,0.75); z-index:100;
+  align-items:center; justify-content:center;
+}
+.gameover-overlay.show { display:flex; }
+.gameover-box {
+  background:var(--cream); border:4px solid var(--ink);
+  box-shadow:10px 10px 0 var(--ink); border-radius:20px;
+  padding:36px 40px; text-align:center; max-width:380px; width:90%;
+}
+.go-title {
+  font-family:'Archivo Black',sans-serif; font-size:2.2rem;
+  letter-spacing:0.1em; margin-bottom:6px;
+}
+.go-sub { font-size:0.85rem; opacity:0.6; margin-bottom:22px; }
+.go-results { margin-bottom:24px; }
+.go-row {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 14px; border-radius:10px; margin-bottom:6px;
+  border:2.5px solid var(--ink);
+}
+.go-row.first-place { background:var(--gold); border-color:var(--ink); }
+.go-row.second-place { background:#fff; }
+.go-row.third-place  { background:#fff; opacity:0.75; }
+.go-player { font-family:'Archivo Black',sans-serif; font-size:0.9rem; }
+.go-score  { font-family:'Archivo Black',sans-serif; font-size:1.2rem; }
+.btn-play-again {
+  font-family:'Archivo Black',sans-serif; font-size:0.9rem;
+  letter-spacing:0.08em; padding:14px 28px;
+  border:3px solid var(--ink); border-radius:10px;
+  cursor:pointer; box-shadow:5px 5px 0 var(--ink);
+  background:var(--emerald); color:#fff; text-transform:uppercase;
+  transition:transform 0.08s, box-shadow 0.08s;
+}
+.btn-play-again:hover { filter:brightness(1.06); }
+.btn-play-again:active { transform:translate(2px,2px); box-shadow:3px 3px 0 var(--ink); }
+
+@keyframes cardIn {
+  0%   { transform: scale(0.85) translateY(-12px); opacity:0; }
+  100% { transform: scale(1)    translateY(0);     opacity:1; }
+}
+.card-anim { animation: cardIn 0.3s ease; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">NO GRACIAS</div>
+  <div class="header-sub">Classroom Demo &mdash; Game Design Studio</div>
+</div>
+
+<div class="game-area">
+
+  <div class="left-panel">
+    <div class="scoreboard">
+      <div class="sb-title">· Scoreboard ·</div>
+      <div id="sbRows"></div>
+    </div>
+    <div class="deck-box">
+      <div class="deck-count" id="deckCount">24</div>
+      <div class="deck-label">Cards Remaining</div>
+    </div>
+    <button class="btn btn-new" onclick="newGame()">🎲 New Game</button>
+    <div class="rules-box">
+      <span class="rh">How to Play</span>
+      <ul>
+        <li><strong>Take:</strong> get the card + all chips on it.</li>
+        <li><strong>No Gracias:</strong> pay 1 chip to pass. Card stays.</li>
+        <li><strong>No chips?</strong> You must take.</li>
+        <li>Runs count once — only the lowest card scores.</li>
+        <li>Chips subtract from your score.</li>
+        <li><strong>Lowest score wins.</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="main-area">
+    <div class="card-stage">
+      <div class="card-wrap">
+        <div class="chip-pile-wrap">
+          <div class="chip-pile" id="chipPile"></div>
+          <div class="chip-pile-count" id="chipPileCount"></div>
+        </div>
+        <div class="center-card" id="centerCard">
+          <div class="card-chip-label">on table</div>
+          <div class="card-number" id="cardNumber">—</div>
+          <div class="card-range"  id="cardRange"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-btns">
+      <button class="btn btn-pass" id="btnPass" onclick="humanPass()">🙅 No Gracias</button>
+      <button class="btn btn-take" id="btnTake" onclick="humanTake()">✋ Tomar</button>
+    </div>
+
+    <div class="feedback neutral" id="feedback">Waiting for a new game...</div>
+
+    <div class="player-bar">
+      <span class="pb-label">Your Chips</span>
+      <div class="pb-chips" id="pbChips"></div>
+      <div class="pb-score-wrap">
+        <div class="pb-score-val" id="pbScore">—</div>
+        <div class="pb-score-label">Your Score</div>
+      </div>
+    </div>
+
+    <div class="hand-area">
+      <div class="hand-title">· Your Cards ·</div>
+      <div class="runs-row" id="runsRow">
+        <span class="hand-empty">No cards yet — take one!</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="gameover-overlay" id="gameoverOverlay">
+  <div class="gameover-box">
+    <div class="go-title" id="goTitle">¡Fin!</div>
+    <div class="go-sub">Final Scores (lower is better)</div>
+    <div class="go-results" id="goResults"></div>
+    <button class="btn-play-again" onclick="newGame()">Play Again</button>
+  </div>
+</div>
+
+<script>
+const TOTAL_CHIPS = 11, CARDS_REMOVED = 9, CARD_MIN = 3, CARD_MAX = 35;
+let state = {};
+
+function freshState() {
+  const allCards = [];
+  for (let i = CARD_MIN; i <= CARD_MAX; i++) allCards.push(i);
+  shuffle(allCards);
+  const deck = allCards.slice(CARDS_REMOVED);
+  shuffle(deck);
+  return {
+    deck, chipsOnCard: 0,
+    players: [
+      { name:'You',  isHuman:true,  chips:TOTAL_CHIPS, cards:[] },
+      { name:'Alex', isHuman:false, chips:TOTAL_CHIPS, cards:[] },
+      { name:'Sam',  isHuman:false, chips:TOTAL_CHIPS, cards:[] },
+    ],
+    currentIdx:0, gameOver:false, aiTimer:null,
+  };
+}
+
+function newGame() {
+  if (state.aiTimer) clearTimeout(state.aiTimer);
+  document.getElementById('gameoverOverlay').classList.remove('show');
+  state = freshState();
+  flipNextCard();
+}
+
+function flipNextCard() {
+  state.chipsOnCard = 0;
+  if (state.deck.length === 0) { endGame(); return; }
+  renderAll();
+  const cur = state.players[state.currentIdx];
+  if (cur.isHuman) {
+    setFeedback('neutral', `Card ${state.deck[0]} is up. Take it or say No Gracias?`);
+    setButtons(true);
+  } else {
+    setButtons(false);
+    scheduleAI();
+  }
+}
+
+function advanceTurn() {
+  state.currentIdx = (state.currentIdx + 1) % state.players.length;
+  const cur = state.players[state.currentIdx];
+  renderAll();
+  if (cur.isHuman) {
+    const card = state.deck[0];
+    const effective = card - state.chipsOnCard;
+    setFeedback('neutral', `Your turn. Card ${card} — effective cost: ${effective > 0 ? effective : 'FREE (take those chips!)'}.`);
+    setButtons(true);
+  } else {
+    setButtons(false);
+    scheduleAI();
+  }
+}
+
+function takeCard(playerIdx) {
+  const player = state.players[playerIdx];
+  const card = state.deck.shift();
+  player.cards.push(card);
+  player.chips += state.chipsOnCard;
+  state.chipsOnCard = 0;
+  renderAll();
+  if (!player.isHuman) {
+    setFeedback('ai', `${player.name} takes ${card}!`);
+  } else {
+    setFeedback('success', `You took ${card}! Score: ${calcScore(player)}`);
+  }
+  state.aiTimer = setTimeout(flipNextCard, 900);
+}
+
+function passCard(playerIdx) {
+  const player = state.players[playerIdx];
+  if (player.chips === 0) { takeCard(playerIdx); return; }
+  player.chips--;
+  state.chipsOnCard++;
+  renderAll();
+  if (!player.isHuman) {
+    setFeedback('ai', `${player.name}: No Gracias! 🙅 (${state.chipsOnCard} chip${state.chipsOnCard !== 1 ? 's' : ''} on card)`);
+    state.aiTimer = setTimeout(advanceTurn, 600);
+  } else {
+    advanceTurn();
+  }
+}
+
+function scheduleAI() { state.aiTimer = setTimeout(() => aiTurn(state.currentIdx), 750); }
+
+function aiTurn(idx) {
+  const player = state.players[idx];
+  const card = state.deck[0];
+  const chips = state.chipsOnCard;
+  if (aiShouldTake(player, card, chips)) takeCard(idx);
+  else passCard(idx);
+}
+
+function aiShouldTake(player, card, chipsOnCard) {
+  if (player.chips === 0) return true;
+  const effective = card - chipsOnCard;
+  if (player.cards.includes(card - 1) || player.cards.includes(card + 1)) {
+    if (effective <= 10 || chipsOnCard >= 3) return true;
+  }
+  if (effective <= 0)  return true;
+  if (effective <= 4)  return true;
+  if (effective <= 9  && chipsOnCard >= 4) return true;
+  if (effective <= 14 && chipsOnCard >= 8) return true;
+  if (effective <= 12 && Math.random() < 0.25) return true;
+  return false;
+}
+
+function humanTake() { setButtons(false); takeCard(state.currentIdx); }
+function humanPass() {
+  const player = state.players[state.currentIdx];
+  if (player.chips === 0) { setFeedback('fail', 'No chips left — you have to take it!'); return; }
+  setButtons(false);
+  passCard(state.currentIdx);
+}
+
+function groupIntoRuns(cards) {
+  if (!cards.length) return [];
+  const sorted = [...cards].sort((a, b) => a - b);
+  const runs = [];
+  let cur = [sorted[0]];
+  for (let i = 1; i < sorted.length; i++) {
+    if (sorted[i] === cur[cur.length-1] + 1) cur.push(sorted[i]);
+    else { runs.push(cur); cur = [sorted[i]]; }
+  }
+  runs.push(cur);
+  return runs;
+}
+
+function calcScore(player) {
+  const runs = groupIntoRuns(player.cards);
+  return runs.reduce((s, r) => s + r[0], 0) - player.chips;
+}
+
+function endGame() {
+  state.gameOver = true; setButtons(false); renderAll();
+  const ranked = [...state.players].map(p => ({ name:p.name, score:calcScore(p) })).sort((a,b)=>a.score-b.score);
+  const places = ['first-place','second-place','third-place'];
+  const medals = ['🥇','🥈','🥉'];
+  let html = '';
+  ranked.forEach((p, i) => {
+    html += `<div class="go-row ${places[i]}"><span class="go-player">${medals[i]} ${p.name}</span><span class="go-score">${p.score}</span></div>`;
+  });
+  const winner = ranked[0];
+  document.getElementById('goTitle').textContent = winner.name === 'You' ? '¡Ganaste! 🎉' : `${winner.name} Wins!`;
+  document.getElementById('goResults').innerHTML = html;
+  document.getElementById('gameoverOverlay').classList.add('show');
+}
+
+function renderAll() {
+  renderScoreboard(); renderCenterCard(); renderChipPile(); renderPlayerBar(); renderHand();
+  document.getElementById('deckCount').textContent = state.deck.length;
+}
+
+function renderScoreboard() {
+  const html = state.players.map((p, i) => {
+    const score = calcScore(p);
+    const isCur = i === state.currentIdx && !state.gameOver;
+    return `<div class="sb-row ${isCur?'active':''}">
+      <span class="turn-arrow">▶</span>
+      <span class="sb-name">${p.name}</span>
+      <span class="sb-chips"><span class="chip-dot"></span><span>${p.chips}</span></span>
+      <span class="sb-score ${score<0?'neg':''}">${score}</span>
+    </div>`;
+  }).join('');
+  document.getElementById('sbRows').innerHTML = html;
+}
+
+function cardClass(n) { return n<=12?'low':n<=24?'mid':'high'; }
+function cardRangeLabel(n) { return n<=12?'3–12 · Low Risk':n<=24?'13–24 · Mid':'25–35 · High Risk'; }
+
+function renderCenterCard() {
+  const card = state.deck[0];
+  document.getElementById('centerCard').className = 'center-card card-anim ' + (card?cardClass(card):'');
+  const numEl = document.getElementById('cardNumber');
+  numEl.className = 'card-number ' + (card?cardClass(card):'');
+  numEl.textContent = card??'—';
+  document.getElementById('cardRange').textContent = card?cardRangeLabel(card):'';
+}
+
+function renderChipPile() {
+  const count = state.chipsOnCard;
+  const show = Math.min(count, 12);
+  let html = '';
+  for (let i=0; i<show; i++) html += `<div class="chip"></div>`;
+  if (count > 12) html += `<div class="chip-overflow">+${count-12}</div>`;
+  document.getElementById('chipPile').innerHTML = html;
+  document.getElementById('chipPileCount').textContent = count>0?`${count} chip${count!==1?'s':''} on card`:'No chips yet';
+}
+
+function renderPlayerBar() {
+  const player = state.players[0];
+  const chips = player.chips;
+  const show = Math.min(chips, 11);
+  let html = '';
+  for (let i=0; i<show; i++) html += `<div class="chip" style="width:16px;height:16px;box-shadow:1px 1px 0 var(--ink);"></div>`;
+  if (chips > 11) html += `<span style="font-size:0.72rem;font-weight:700;margin-left:4px">+${chips-11}</span>`;
+  document.getElementById('pbChips').innerHTML = html;
+  document.getElementById('pbScore').textContent = calcScore(player);
+}
+
+function renderHand() {
+  const player = state.players[0];
+  const runsRow = document.getElementById('runsRow');
+  if (!player.cards.length) { runsRow.innerHTML = '<span class="hand-empty">No cards yet — take one!</span>'; return; }
+  const runs = groupIntoRuns(player.cards);
+  let html = '';
+  runs.forEach(run => {
+    const inRun = run.length > 1;
+    const cardsHtml = run.map(n =>
+      `<div class="hand-card ${inRun?'in-run':'solo'} ${cardClass(n)}" style="color:${inRun?'#27AE60':'var(--ink)'}">${n}</div>`
+    ).join('');
+    html += `<div class="run-group"><div class="run-cards">${cardsHtml}</div><div class="run-score">${inRun?`run → ${run[0]} pts`:`${run[0]} pts`}</div></div>`;
+  });
+  runsRow.innerHTML = html;
+}
+
+function setFeedback(cls, msg) {
+  const el = document.getElementById('feedback');
+  el.className = 'feedback ' + cls;
+  el.textContent = msg;
+}
+
+function setButtons(enabled) {
+  const player = state.players[state.currentIdx];
+  const mustTake = player && player.chips === 0;
+  document.getElementById('btnTake').disabled = !enabled;
+  document.getElementById('btnPass').disabled = !enabled || mustTake;
+  if (enabled && mustTake) setFeedback('fail', 'No chips left — you must take the card!');
+}
+
+function shuffle(arr) {
+  for (let i=arr.length-1; i>0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]] = [arr[j],arr[i]];
+  }
+  return arr;
+}
+
+newGame();
+</script>
+</body>
+</html>
