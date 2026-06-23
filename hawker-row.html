@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HAWKER ROW — Classroom Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Lilita+One&display=swap" rel="stylesheet">
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+:root {
+  --night:   #171432;
+  --night2:  #262148;
+  --night3:  #3A3470;
+  --horizon: #4A2C5E;
+  --lantern: #FFB627;
+  --lantern2:#FFD978;
+  --goldk:   #B27313;
+  --crimson: #D7423E;
+  --crimson2:#A82E2B;
+  --cream:   #FFF6E3;
+  --cream2:  #F3E5C3;
+  --ink:     #2B2440;
+  --teal:    #2EC4B6;
+}
+
+body {
+  background: radial-gradient(ellipse at 50% -10%, #2A2156 0%, var(--night) 55%, #100E26 100%);
+  color: var(--cream);
+  font-family:'Baloo 2', sans-serif;
+  min-height:100vh; padding:20px 18px 44px;
+  user-select:none;
+}
+.disp { font-family:'Lilita One', sans-serif; }
+
+/* ── HEADER ── */
+.header { text-align:center; margin-bottom:16px; }
+.header-logo {
+  font-family:'Lilita One', sans-serif; font-size:2.7rem; letter-spacing:0.1em;
+  background:linear-gradient(180deg,#FFE08A,var(--lantern) 55%,var(--goldk));
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  text-shadow:0 3px 0 rgba(0,0,0,0.25);
+}
+.header-sub {
+  font-size:0.8rem; font-weight:700; opacity:0.65; color:var(--lantern2);
+  letter-spacing:0.16em; text-transform:uppercase; margin-top:2px;
+}
+
+.wrap { max-width:980px; margin:0 auto; }
+
+/* ── STATUS BAR ── */
+.status-bar {
+  display:flex; justify-content:center; gap:10px; margin-bottom:14px; flex-wrap:wrap;
+}
+.status-chip {
+  background:var(--night2); border:2px solid var(--lantern); border-radius:20px;
+  padding:7px 16px; font-size:0.78rem; font-weight:700; color:var(--lantern2);
+  letter-spacing:0.04em;
+}
+.status-chip.phase { background:var(--crimson); border-color:var(--crimson2); color:#fff; }
+
+/* ── LANE STRIP ── */
+.lane-strip {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:14px;
+}
+.stall-card {
+  background:var(--cream); border:3px solid var(--ink); border-radius:14px;
+  box-shadow:5px 5px 0 rgba(0,0,0,0.35); padding:12px; color:var(--ink);
+  position:relative; transition:transform 0.2s;
+}
+.stall-card.resolving { box-shadow:5px 5px 0 var(--lantern), 0 0 0 3px var(--lantern); }
+.stall-pos {
+  position:absolute; top:-12px; left:10px;
+  background:var(--crimson); color:#fff; font-family:'Lilita One',sans-serif;
+  font-size:0.7rem; padding:3px 9px; border-radius:10px; border:2px solid var(--ink);
+}
+.stall-name {
+  font-family:'Lilita One', sans-serif; font-size:1.05rem; text-align:center; margin:6px 0 4px;
+}
+.stall-coins {
+  text-align:center; font-size:0.85rem; font-weight:700; color:var(--goldk);
+  margin-bottom:8px;
+}
+.stall-counters { display:flex; gap:5px; justify-content:center; margin-bottom:6px; }
+.mini-counter {
+  flex:1; min-height:48px; border:2px dashed rgba(43,36,64,0.3); border-radius:8px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  font-size:0.95rem; padding:3px; gap:1px; background:rgba(43,36,64,0.03);
+}
+.mini-counter.complete {
+  border:2px solid var(--teal); background:rgba(46,196,182,0.14);
+}
+.mini-counter .mc-cards { display:flex; gap:1px; flex-wrap:wrap; justify-content:center; }
+.mini-counter .mc-label {
+  font-size:0.5rem; font-weight:800; text-transform:uppercase; letter-spacing:0.04em;
+  color:var(--teal); margin-top:1px;
+}
+.stall-sold {
+  text-align:center; font-size:0.66rem; font-weight:700; opacity:0.55;
+}
+.you-tag {
+  position:absolute; top:-12px; right:10px;
+  background:var(--teal); color:#fff; font-size:0.62rem; font-weight:800;
+  padding:3px 8px; border-radius:8px; border:2px solid var(--ink); letter-spacing:0.05em;
+}
+
+/* ── MAIN PANEL ── */
+.main-panel {
+  background:var(--night2); border:3px solid var(--lantern); border-radius:16px;
+  box-shadow:0 6px 0 rgba(0,0,0,0.3); padding:18px; margin-bottom:14px;
+  min-height:170px;
+}
+.panel-title {
+  font-family:'Lilita One', sans-serif; font-size:1rem; color:var(--lantern2);
+  letter-spacing:0.08em; margin-bottom:12px; text-align:center;
+}
+.panel-msg { text-align:center; font-size:0.86rem; opacity:0.85; margin-bottom:14px; line-height:1.5; }
+
+/* hand / draft cards */
+.hand-row { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+.ing-card {
+  width:78px; height:96px; border-radius:10px; border:3px solid var(--ink);
+  background:var(--cream); color:var(--ink); display:flex; flex-direction:column;
+  align-items:center; justify-content:center; cursor:pointer; gap:4px;
+  box-shadow:3px 3px 0 rgba(0,0,0,0.4); transition:transform 0.12s, box-shadow 0.12s;
+}
+.ing-card:hover { transform:translateY(-4px); box-shadow:3px 7px 0 rgba(0,0,0,0.4); }
+.ing-card .ic-emoji { font-size:1.9rem; }
+.ing-card .ic-name { font-size:0.62rem; font-weight:800; text-align:center; text-transform:uppercase; }
+
+/* cook target buttons */
+.cook-targets { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:6px; }
+.cook-target {
+  width:130px; border-radius:10px; border:3px solid var(--ink); background:var(--cream);
+  color:var(--ink); padding:10px 8px; cursor:pointer; text-align:center;
+  box-shadow:3px 3px 0 rgba(0,0,0,0.4); transition:transform 0.1s;
+}
+.cook-target:hover:not(.disabled) { transform:translateY(-3px); }
+.cook-target.disabled { opacity:0.35; cursor:not-allowed; }
+.cook-target.wok { background:var(--crimson); color:#fff; border-color:var(--crimson2); }
+.ct-title { font-family:'Lilita One',sans-serif; font-size:0.72rem; margin-bottom:5px; }
+.ct-cards { display:flex; gap:2px; justify-content:center; font-size:1rem; min-height:22px; }
+
+/* customer card */
+.customer-card {
+  width:200px; margin:0 auto 14px; background:var(--cream); color:var(--ink);
+  border:3px solid var(--crimson); border-radius:14px; box-shadow:4px 4px 0 rgba(0,0,0,0.4);
+  padding:14px; text-align:center;
+}
+.cc-emoji { font-size:2.4rem; }
+.cc-name { font-family:'Lilita One',sans-serif; font-size:1rem; margin:4px 0 6px; color:var(--crimson); }
+.cc-rule { font-size:0.74rem; line-height:1.4; font-weight:600; }
+
+.sell-btns { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+.btn {
+  font-family:'Lilita One', sans-serif; font-size:0.82rem; letter-spacing:0.04em;
+  padding:11px 18px; border:3px solid var(--ink); border-radius:10px;
+  cursor:pointer; box-shadow:3px 3px 0 rgba(0,0,0,0.4);
+  transition:transform 0.08s, box-shadow 0.08s; text-transform:uppercase;
+}
+.btn:hover:not(:disabled) { filter:brightness(1.08); }
+.btn:active:not(:disabled) { transform:translate(2px,2px); box-shadow:1px 1px 0 rgba(0,0,0,0.4); }
+.btn:disabled { opacity:0.35; cursor:not-allowed; }
+.btn-sell  { background:var(--teal); color:#fff; }
+.btn-pass  { background:var(--cream); color:var(--ink); }
+.btn-begin { background:var(--lantern); color:var(--ink); font-size:1rem; padding:14px 26px; }
+.btn-new   { background:var(--night3); color:var(--cream); border-color:var(--lantern); }
+
+.resolving-note {
+  text-align:center; font-size:0.8rem; opacity:0.6; font-style:italic;
+}
+
+/* ── LOG ── */
+.log-panel {
+  background:rgba(0,0,0,0.25); border:2px solid var(--night3); border-radius:12px;
+  padding:10px 14px; font-size:0.76rem; line-height:1.6; max-height:120px;
+  overflow-y:auto; margin-bottom:14px;
+}
+.log-panel div { opacity:0.9; border-bottom:1px solid rgba(255,255,255,0.06); padding:3px 0; }
+.log-panel div:last-child { color:var(--lantern2); font-weight:700; }
+
+/* ── DECK STATS ── */
+.stat-row {
+  display:flex; justify-content:center; gap:14px; margin-bottom:14px; flex-wrap:wrap;
+}
+.stat-pill {
+  font-size:0.68rem; font-weight:700; color:var(--cream2); opacity:0.7;
+  background:rgba(255,255,255,0.05); padding:5px 12px; border-radius:14px;
+}
+
+/* ── CONTROLS ── */
+.controls-row { display:flex; justify-content:center; gap:10px; margin-bottom:16px; }
+
+/* ── BIG SIX STRIP ── */
+.bigsix {
+  background:var(--night2); border:2px solid var(--night3); border-radius:12px;
+  padding:13px 16px; font-size:0.74rem; line-height:1.6;
+  display:grid; grid-template-columns:1fr 1fr; gap:5px 18px;
+}
+.bigsix .bh {
+  grid-column:1/-1; font-family:'Lilita One',sans-serif; font-size:0.74rem;
+  color:var(--teal); letter-spacing:0.06em; margin-bottom:3px;
+}
+.bigsix span.lbl { color:var(--lantern2); font-weight:800; }
+
+/* ── GAME OVER ── */
+.gameover { display:none; position:fixed; inset:0; background:rgba(10,8,20,0.85);
+  z-index:100; align-items:center; justify-content:center; padding:20px; }
+.gameover.show { display:flex; }
+.go-box {
+  background:var(--cream); color:var(--ink); border:4px solid var(--lantern);
+  box-shadow:0 0 0 4px var(--ink), 10px 10px 0 rgba(0,0,0,0.4); border-radius:20px;
+  padding:32px 36px; max-width:440px; width:100%; text-align:center;
+  max-height:88vh; overflow-y:auto;
+}
+.go-title { font-family:'Lilita One',sans-serif; font-size:1.8rem; color:var(--crimson); margin-bottom:4px; }
+.go-sub { font-size:0.8rem; opacity:0.6; margin-bottom:18px; }
+.go-player-block {
+  border:2.5px solid var(--ink); border-radius:10px; padding:10px 14px; margin-bottom:10px; text-align:left;
+}
+.go-player-block.winner { background:#FFF1C9; border-color:var(--goldk); }
+.go-pname { font-family:'Lilita One',sans-serif; font-size:0.95rem; display:flex; justify-content:space-between; }
+.go-detail { font-size:0.72rem; opacity:0.7; margin-top:3px; line-height:1.5; }
+
+@keyframes fadeIn { from{opacity:0; transform:scale(0.95);} to{opacity:1; transform:scale(1);} }
+.main-panel { animation:fadeIn 0.25s ease; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">HAWKER ROW</div>
+  <div class="header-sub">Classroom Demo &middot; Game Design Studio</div>
+</div>
+
+<div class="wrap">
+
+  <div class="status-bar" id="statusBar"></div>
+
+  <div class="lane-strip" id="laneStrip"></div>
+
+  <div class="main-panel" id="mainPanel"></div>
+
+  <div class="log-panel" id="logPanel"></div>
+
+  <div class="stat-row" id="statRow"></div>
+
+  <div class="controls-row">
+    <button class="btn btn-new" onclick="newGame()">&#8634; New Game</button>
+  </div>
+
+  <div class="bigsix">
+    <span class="bh">&middot; Spot the Big Six &middot;</span>
+    <span><span class="lbl">Core Mechanic:</span> draft-and-cook.</span>
+    <span><span class="lbl">Risk/Reward:</span> snack now vs. dish later.</span>
+    <span><span class="lbl">Feedback Loop:</span> selling moves you toward Stall 1 &mdash; and Stall 1 sells first.</span>
+    <span><span class="lbl">Randomness vs Skill:</span> deals &amp; customers vs. drafting &amp; lane position.</span>
+    <span><span class="lbl">Player Agency:</span> every card, every counter, sell-or-pass.</span>
+    <span><span class="lbl">Replayability:</span> shuffled customers + secret specialties.</span>
+  </div>
+
+</div>
+
+<div class="gameover" id="gameover">
+  <div class="go-box">
+    <div class="go-title" id="goTitle">Market's Closed!</div>
+    <div class="go-sub">Final Tally</div>
+    <div id="goBody"></div>
+    <button class="btn btn-begin" onclick="newGame()" style="margin-top:8px;">Play Again</button>
+  </div>
+</div>
+
+<script>
+const ING_INFO = {
+  noodles: {name:'Noodles', emoji:'🍜'},
+  broth:   {name:'Broth',   emoji:'🥣'},
+  meat:    {name:'Meat',    emoji:'🍖'},
+  veggies: {name:'Veggies', emoji:'🥬'},
+  rice:    {name:'Rice',    emoji:'🍚'},
+  chili:   {name:'Chili',   emoji:'🌶️'},
+  wild:    {name:'Golden Ladle', emoji:'🥄'},
+};
+
+const RECIPES = [
+  {name:'Hawker Row Noodles', ings:['noodles','broth','veggies'], price:7},
+  {name:'Fire Ramen',           ings:['noodles','broth','chili'],   price:8},
+  {name:'Sizzling Skewers',     ings:['meat','veggies','chili'],    price:8},
+  {name:'Dragon Rice Bowl',     ings:['rice','meat','chili'],       price:8},
+  {name:'Steamed Dumplings',    ings:['meat','veggies','rice'],     price:7},
+];
+
+const CUSTOMER_TYPES = [
+  {key:'noodle',  count:4, name:'Noodle Lover', emoji:'🍜', craves:'noodles'},
+  {key:'soup',    count:3, name:'Soup Slurper', emoji:'🥣', craves:'broth'},
+  {key:'meat',    count:4, name:'Meat Lover',   emoji:'🍖', craves:'meat'},
+  {key:'veggie',  count:4, name:'Veggie Fan',   emoji:'🥬', craves:'veggies'},
+  {key:'rice',    count:3, name:'Rice Fan',     emoji:'🍚', craves:'rice'},
+  {key:'spice',   count:4, name:'Spice Seeker', emoji:'🌶️', craves:'chili'},
+  {key:'spender', count:3, name:'Big Spender',  emoji:'🎩', special:'DISH_ONLY',  bonus:2,
+    rule:'Buys a FULL DISH only — pays menu price +2 bonus.'},
+  {key:'snacker', count:3, name:'Snacker',      emoji:'🥡', special:'SNACK_ONLY', bonus:1,
+    rule:'Buys a STREET SNACK only — pays 3 +1 bonus.'},
+  {key:'critic',  count:2, name:'Food Critic',  emoji:'📝', special:'CRITIC',
+    rule:'Buys the priciest FULL DISH in the whole market. That stall jumps to Stall 1!'},
+];
+
+const SPECIALTIES = [
+  {key:'wokstar',         name:'Wok Star',         rule:'+3 coins for each Fire Ramen sold.'},
+  {key:'noodlelegend',    name:'Noodle Legend',    rule:'+3 coins for each Hawker Row Noodles sold.'},
+  {key:'crowdfavorite',   name:'Crowd Favorite',   rule:'+5 coins if your stall ends at position 1 or 2.'},
+  {key:'varietyvirtuoso', name:'Variety Virtuoso', rule:'+6 coins if you sold 3+ different full dishes.'},
+];
+
+function customerInfo(key){ return CUSTOMER_TYPES.find(c=>c.key===key); }
+function customerName(key){ return customerInfo(key).name; }
+
+let ST = {};
+
+function shuffle(arr){
+  const a = [...arr];
+  for (let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function buildIngredientDeck(){
+  let deck = [];
+  for (const k of ['noodles','broth','meat','veggies','rice','chili']){
+    for (let i=0;i<12;i++) deck.push(k);
+  }
+  for (let i=0;i<8;i++) deck.push('wild');
+  return shuffle(deck);
+}
+function buildCustomerDeck(){
+  let deck = [];
+  for (const c of CUSTOMER_TYPES) for (let i=0;i<c.count;i++) deck.push(c.key);
+  return shuffle(deck);
+}
+
+function freshGame(){
+  const names = ['You','Alex','Sam'];
+  const specPool = shuffle(SPECIALTIES).slice(0,3);
+  return {
+    night:1, turn:1, phase:'intro',
+    players: names.map((name,i)=>({
+      name, isHuman:i===0, coins:2,
+      counters:[[],[],[]], soldPile:[], hand:[], drafted:null,
+      specialty:specPool[i],
+    })),
+    lane: shuffle([0,1,2]),
+    ingDeck: buildIngredientDeck(),
+    ingDiscard: [],
+    custDeck: buildCustomerDeck(),
+    custWalked: [],
+    log: [],
+    pendingCustomers: [],
+    currentCustomer: null,
+    resolveLaneIdx: 0,
+    pendingHumanSale: null,
+    inRushHour:false,
+    rushHourDone:false,
+  };
+}
+
+function newGame(){
+  document.getElementById('gameover').classList.remove('show');
+  ST = freshGame();
+  addLog('🏮 The lanterns are lit. Three nights, one market, may the best stall win.');
+  renderAll();
+}
+
+function findCompletedRecipe(counter){
+  if (counter.length !== 3) return null;
+  const nonWild = counter.filter(c=>c!=='wild');
+  const wildCount = counter.length - nonWild.length;
+  for (const r of RECIPES){
+    const need = [...r.ings];
+    let ok = true;
+    for (const c of nonWild){
+      const idx = need.indexOf(c);
+      if (idx===-1){ ok=false; break; }
+      need.splice(idx,1);
+    }
+    if (ok && need.length === wildCount) return r;
+  }
+  return null;
+}
+
+function drawIngredient(){
+  if (ST.ingDeck.length===0){
+    if (ST.ingDiscard.length===0) return null;
+    ST.ingDeck = shuffle(ST.ingDiscard);
+    ST.ingDiscard = [];
+    addLog('🥘 The Wok pile is reshuffled into a fresh ingredient deck.');
+  }
+  return ST.ingDeck.pop();
+}
+
+function dealHands(){
+  for (const p of ST.players){
+    p.hand = [];
+    for (let i=0;i<5;i++){
+      const c = drawIngredient();
+      if (c) p.hand.push(c);
+    }
+  }
+}
+
+function aiCardScore(p, card){
+  let best = 0;
+  p.counters.forEach(counter => {
+    if (counter.length>=3) return;
+    const hyp = [...counter, card];
+    const rec = findCompletedRecipe(hyp);
+    if (rec){ best = Math.max(best, 10+rec.price); return; }
+    const nonWild = hyp.filter(c=>c!=='wild');
+    const wildCount = hyp.length - nonWild.length;
+    let reachable = 0;
+    for (const r of RECIPES){
+      const need = [...r.ings];
+      let ok = true;
+      for (const c of nonWild){
+        const idx = need.indexOf(c);
+        if (idx===-1){ ok=false; break; }
+        need.splice(idx,1);
+      }
+      if (ok && need.length>=wildCount) reachable++;
+    }
+    best = Math.max(best, reachable*2 + hyp.length*0.5);
+  });
+  if (best===0) best = card==='wild' ? 2.2 : 0.8;
+  return best + Math.random()*0.4;
+}
+
+function aiPickDraftIdx(p){
+  let bestIdx=0, bestScore=-Infinity;
+  p.hand.forEach((card, idx) => {
+    const score = aiCardScore(p, card);
+    if (score>bestScore){ bestScore=score; bestIdx=idx; }
+  });
+  return bestIdx;
+}
+
+function aiCook(p, card){
+  let bestIdx=-1, bestScore=-Infinity;
+  p.counters.forEach((counter, idx) => {
+    if (counter.length>=3) return;
+    const hyp = [...counter, card];
+    let score = findCompletedRecipe(hyp) ? 50 : aiCardScore({counters:[counter]}, card);
+    if (score>bestScore){ bestScore=score; bestIdx=idx; }
+  });
+  if (bestIdx===-1){
+    p.coins += 1;
+    ST.ingDiscard.push(card);
+    addLog(`${p.name} has no open counter — tosses ${ING_INFO[card].name} in the Wok (+1 coin).`);
+  } else {
+    p.counters[bestIdx].push(card);
+    const rec = findCompletedRecipe(p.counters[bestIdx]);
+    if (rec) addLog(`${p.name} completes <b>${rec.name}</b> on Counter ${bestIdx+1}! 🍽️`);
+    else addLog(`${p.name} adds ${ING_INFO[card].name} to Counter ${bestIdx+1}.`);
+  }
+}
+
+function aiSellDecision(elig){
+  if (elig.dish) return 'dish';
+  if (elig.snack) return Math.random()<0.65 ? 'snack' : 'pass';
+  return 'pass';
+}
+
+function passHands(direction){
+  const n = ST.players.length;
+  const hands = ST.players.map(p=>p.hand);
+  for (let i=0;i<n;i++){
+    const fromIdx = ((i - direction) % n + n) % n;
+    ST.players[i].hand = hands[fromIdx];
+  }
+}
+
+function discardLeftovers(){
+  for (const p of ST.players){
+    if (p.hand.length>0){
+      const card = p.hand.pop();
+      p.coins += 1;
+      ST.ingDiscard.push(card);
+    }
+    p.hand = [];
+  }
+  addLog('🌙 Night ends — everyone tosses their last card in the Wok for 1 coin.');
+}
+
+function startDraftPhase(){
+  ST.phase = 'draft';
+  for (const p of ST.players) p.drafted = null;
+  for (let i=1;i<ST.players.length;i++){
+    const idx = aiPickDraftIdx(ST.players[i]);
+    ST.players[i].drafted = ST.players[i].hand.splice(idx,1)[0];
+  }
+  renderAll();
+}
+
+function humanDraft(cardIdx){
+  if (ST.phase!=='draft') return;
+  const p = ST.players[0];
+  p.drafted = p.hand.splice(cardIdx,1)[0];
+  addLog(`Draft reveal — You: <b>${ING_INFO[p.drafted].name}</b> · Alex: ${ING_INFO[ST.players[1].drafted].name} · Sam: ${ING_INFO[ST.players[2].drafted].name}`);
+
+  if (ST.turn < 4){
+    const dir = ST.night===2 ? -1 : 1;
+    passHands(dir);
+    addLog(`Hands pass ${dir===1 ? 'left' : 'right'} for the next turn.`);
+  } else {
+    discardLeftovers();
+  }
+  startCookPhase();
+}
+
+function startCookPhase(){
+  ST.phase = 'cook';
+  for (let i=1;i<ST.players.length;i++){
+    aiCook(ST.players[i], ST.players[i].drafted);
+    ST.players[i].drafted = null;
+  }
+  renderAll();
+}
+
+function humanCook(target){
+  if (ST.phase!=='cook') return;
+  const p = ST.players[0];
+  const card = p.drafted;
+  if (!card) return;
+  if (target==='wok'){
+    p.coins += 1;
+    ST.ingDiscard.push(card);
+    addLog(`You toss ${ING_INFO[card].name} in the Wok (+1 coin).`);
+  } else {
+    p.counters[target].push(card);
+    const rec = findCompletedRecipe(p.counters[target]);
+    if (rec) addLog(`You complete <b>${rec.name}</b> on Counter ${target+1}! 🍽️ Ready to sell.`);
+    else addLog(`You add ${ING_INFO[card].name} to Counter ${target+1}.`);
+  }
+  p.drafted = null;
+  renderAll();
+  setTimeout(()=>startCustomerPhase(2), 400);
+}
+
+function startCustomerPhase(count){
+  ST.phase = 'customers';
+  const flipperIdx = ST.lane[ST.lane.length-1];
+  ST.pendingCustomers = [];
+  for (let i=0;i<count;i++){
+    const c = ST.custDeck.pop();
+    if (c) ST.pendingCustomers.push(c);
+  }
+  addLog(`👀 ${ST.players[flipperIdx].name}'s stall (furthest from entrance) flips ${ST.pendingCustomers.length} customer${ST.pendingCustomers.length!==1?'s':''}.`);
+  renderAll();
+  setTimeout(nextCustomer, 500);
+}
+
+function nextCustomer(){
+  if (ST.pendingCustomers.length===0){
+    ST.currentCustomer = null;
+    renderAll();
+    setTimeout(finishCustomerPhase, 400);
+    return;
+  }
+  const key = ST.pendingCustomers.shift();
+  ST.currentCustomer = key;
+  ST.resolveLaneIdx = 0;
+  renderAll();
+  if (key==='critic') setTimeout(resolveCritic, 600);
+  else advanceLaneResolution();
+}
+
+function getEligibility(p, key){
+  const ct = customerInfo(key);
+  let dish=null, snack=null;
+  if (ct.special==='DISH_ONLY'){
+    for (let i=0;i<3;i++){
+      const r = findCompletedRecipe(p.counters[i]);
+      if (r){ dish={counterIdx:i, recipe:r}; break; }
+    }
+  } else if (ct.special==='SNACK_ONLY'){
+    for (let i=0;i<3;i++){
+      if (p.counters[i].length>=2){ snack=i; break; }
+    }
+  } else {
+    const craved = ct.craves;
+    for (let i=0;i<3;i++){
+      const r = findCompletedRecipe(p.counters[i]);
+      if (r && r.ings.includes(craved)){ dish={counterIdx:i, recipe:r}; break; }
+    }
+    for (let i=0;i<3;i++){
+      if (p.counters[i].length>=2 && (p.counters[i].includes(craved) || p.counters[i].includes('wild'))){
+        snack=i; break;
+      }
+    }
+  }
+  return {dish, snack};
+}
+
+function advanceLaneResolution(){
+  const key = ST.currentCustomer;
+  if (ST.resolveLaneIdx >= ST.lane.length){
+    addLog(`🚶 No stall could serve the ${customerName(key)}. They walk away.`);
+    ST.custWalked.push(key);
+    setTimeout(nextCustomer, 600);
+    return;
+  }
+  const playerIdx = ST.lane[ST.resolveLaneIdx];
+  const p = ST.players[playerIdx];
+  const elig = getEligibility(p, key);
+
+  if (!elig.dish && !elig.snack){
+    ST.resolveLaneIdx++;
+    advanceLaneResolution();
+    return;
+  }
+
+  renderAll();
+
+  if (p.isHuman){
+    ST.pendingHumanSale = {key, elig};
+    renderAll();
+  } else {
+    setTimeout(() => {
+      const choice = aiSellDecision(elig);
+      if (choice==='pass'){
+        addLog(`${p.name} could serve the ${customerName(key)} but passes.`);
+        ST.resolveLaneIdx++;
+        advanceLaneResolution();
+      } else {
+        executeSale(playerIdx, key, choice, elig);
+        setTimeout(nextCustomer, 900);
+      }
+    }, 700);
+  }
+}
+
+function humanSellChoice(choice){
+  const {key, elig} = ST.pendingHumanSale;
+  ST.pendingHumanSale = null;
+  if (choice==='pass'){
+    addLog(`You could serve the ${customerName(key)} but you pass.`);
+    ST.resolveLaneIdx++;
+    advanceLaneResolution();
+  } else {
+    executeSale(0, key, choice, elig);
+    setTimeout(nextCustomer, 900);
+  }
+}
+
+function executeSale(playerIdx, key, choice, elig){
+  const p = ST.players[playerIdx];
+  const ct = customerInfo(key);
+  let coinsEarned = 0, desc = '';
+
+  if (choice==='dish'){
+    const {counterIdx, recipe} = elig.dish;
+    coinsEarned = recipe.price + (ct.special==='DISH_ONLY' ? ct.bonus : 0);
+    const sold = p.counters[counterIdx];
+    p.soldPile.push({type:'dish', name:recipe.name, cards:sold});
+    p.counters[counterIdx] = [];
+    desc = `🎉 ${p.name} sells <b>${recipe.name}</b> to the ${ct.name} for ${coinsEarned} coins!`;
+  } else {
+    const counterIdx = elig.snack;
+    const counter = p.counters[counterIdx];
+    let sellCards;
+    if (ct.craves){
+      const idx1 = counter.findIndex(c=>c===ct.craves || c==='wild');
+      const rest = counter.filter((_,i)=>i!==idx1);
+      sellCards = [counter[idx1], rest[0]];
+    } else {
+      sellCards = counter.slice(0,2);
+    }
+    coinsEarned = 3 + (ct.special==='SNACK_ONLY' ? ct.bonus : 0);
+    p.soldPile.push({type:'snack', name:'Street Snack', cards:sellCards});
+    for (const c of sellCards){
+      const idx = counter.indexOf(c);
+      counter.splice(idx,1);
+    }
+    desc = `🎉 ${p.name} sells a <b>Street Snack</b> to the ${ct.name} for ${coinsEarned} coins!`;
+  }
+
+  p.coins += coinsEarned;
+  addLog(desc);
+  moveTowardEntrance(playerIdx);
+  renderAll();
+}
+
+function moveTowardEntrance(playerIdx){
+  const pos = ST.lane.indexOf(playerIdx);
+  if (pos===0){ addLog(`${ST.players[playerIdx].name} is already at Stall 1!`); return; }
+  [ST.lane[pos-1], ST.lane[pos]] = [ST.lane[pos], ST.lane[pos-1]];
+  addLog(`📍 ${ST.players[playerIdx].name}'s stall moves to position ${pos} — closer to the entrance!`);
+}
+
+function resolveCritic(){
+  let best = null;
+  ST.players.forEach((p, pi) => {
+    p.counters.forEach((counter, ci) => {
+      const r = findCompletedRecipe(counter);
+      if (r && (!best || r.price > best.recipe.price)){
+        best = {playerIdx:pi, counterIdx:ci, recipe:r};
+      }
+    });
+  });
+  if (!best){
+    addLog('📝 The Food Critic finds nothing impressive enough. They walk away.');
+    ST.custWalked.push('critic');
+    setTimeout(nextCustomer, 600);
+    return;
+  }
+  const p = ST.players[best.playerIdx];
+  const sold = p.counters[best.counterIdx];
+  p.soldPile.push({type:'dish', name:best.recipe.name, cards:sold});
+  p.counters[best.counterIdx] = [];
+  p.coins += best.recipe.price;
+  addLog(`📝 The Food Critic raves about ${p.name}'s <b>${best.recipe.name}</b>! +${best.recipe.price} coins, and the stall jumps straight to Stall 1! 🌟`);
+  const pos = ST.lane.indexOf(best.playerIdx);
+  ST.lane.splice(pos,1);
+  ST.lane.unshift(best.playerIdx);
+  renderAll();
+  setTimeout(nextCustomer, 1000);
+}
+
+function finishCustomerPhase(){
+  if (ST.inRushHour){
+    ST.inRushHour = false;
+    endGame();
+  } else {
+    endTurn();
+  }
+}
+
+function endTurn(){
+  if (ST.turn < 4){
+    ST.turn++;
+    startDraftPhase();
+  } else {
+    endNight();
+  }
+}
+
+function endNight(){
+  if (ST.night < 3){
+    addLog(`— 🌅 End of Night ${ST.night} —`);
+    ST.night++;
+    ST.turn = 1;
+    dealHands();
+    startDraftPhase();
+  } else if (!ST.rushHourDone){
+    rushHour();
+  } else {
+    endGame();
+  }
+}
+
+function rushHour(){
+  ST.rushHourDone = true;
+  ST.inRushHour = true;
+  const roll = Math.floor(Math.random()*6)+1;
+  addLog(`🎲 RUSH HOUR! Rolling the die... <b>${roll}</b>! Flipping ${roll} extra customer${roll!==1?'s':''}.`);
+  startCustomerPhase(roll);
+}
+
+function computeSpecialtyBonus(p, playerIdx){
+  const s = p.specialty;
+  if (!s) return 0;
+  switch(s.key){
+    case 'wokstar': return p.soldPile.filter(x=>x.name==='Fire Ramen').length * 3;
+    case 'noodlelegend': return p.soldPile.filter(x=>x.name==='Hawker Row Noodles').length * 3;
+    case 'crowdfavorite': return ST.lane.indexOf(playerIdx) <= 1 ? 5 : 0;
+    case 'varietyvirtuoso': {
+      const distinct = new Set(p.soldPile.filter(x=>x.type==='dish').map(x=>x.name));
+      return distinct.size>=3 ? 6 : 0;
+    }
+  }
+  return 0;
+}
+
+function endGame(){
+  ST.phase = 'over';
+  const results = ST.players.map((p, i) => {
+    const bonus = computeSpecialtyBonus(p, i);
+    return {
+      name:p.name, specialty:p.specialty, bonus, base:p.coins,
+      total:p.coins+bonus, lanePos: ST.lane.indexOf(i)+1, soldCount:p.soldPile.length,
+    };
+  });
+  results.sort((a,b)=> b.total - a.total || a.lanePos - b.lanePos);
+
+  let html = '';
+  results.forEach((r,i) => {
+    html += `<div class="go-player-block ${i===0?'winner':''}">
+      <div class="go-pname"><span>${i===0?'🏆 ':''}${r.name}</span><span>${r.total} coins</span></div>
+      <div class="go-detail">
+        ${r.base} from sales + ${r.bonus} specialty bonus<br>
+        Specialty: <b>${r.specialty.name}</b> — ${r.specialty.rule}<br>
+        Sold ${r.soldCount} item${r.soldCount!==1?'s':''} · ended at Stall ${r.lanePos}
+      </div>
+    </div>`;
+  });
+  document.getElementById('goTitle').textContent =
+    results[0].name === 'You' ? '🎉 You\'re the Legend!' : `${results[0].name} Wins the Night!`;
+  document.getElementById('goBody').innerHTML = html;
+  renderAll();
+  document.getElementById('gameover').classList.add('show');
+}
+
+function renderAll(){
+  renderStatusBar();
+  renderLane();
+  renderMain();
+  renderLog();
+  renderStats();
+}
+
+function renderStatusBar(){
+  const bar = document.getElementById('statusBar');
+  if (ST.phase==='intro'){
+    bar.innerHTML = `<div class="status-chip phase">Ready to open the market?</div>`;
+    return;
+  }
+  const phaseLabel = {draft:'DRAFT', cook:'COOK', customers:'CUSTOMERS', over:'MARKET CLOSED'}[ST.phase] || '';
+  const nightLabel = ST.inRushHour ? 'RUSH HOUR' : `Night ${ST.night} / 3`;
+  bar.innerHTML = `
+    <div class="status-chip">${nightLabel}</div>
+    <div class="status-chip">Turn ${ST.turn} / 4</div>
+    <div class="status-chip phase">${phaseLabel}</div>
+  `;
+}
+
+function miniCounterHTML(counter){
+  const rec = findCompletedRecipe(counter);
+  const cardsHtml = counter.map(c=>`<span>${ING_INFO[c].emoji}</span>`).join('');
+  return `<div class="mini-counter ${rec?'complete':''}">
+    <div class="mc-cards">${cardsHtml || '&nbsp;'}</div>
+    ${rec ? `<div class="mc-label">${rec.name.split(' ').slice(0,2).join(' ')}</div>` : ''}
+  </div>`;
+}
+
+function renderLane(){
+  const strip = document.getElementById('laneStrip');
+  let html = '';
+  ST.lane.forEach((playerIdx, pos) => {
+    const p = ST.players[playerIdx];
+    const isResolving = ST.phase==='customers' && ST.resolveLaneIdx===pos && ST.currentCustomer;
+    html += `<div class="stall-card ${isResolving?'resolving':''}">
+      <div class="stall-pos">Stall ${pos+1}</div>
+      ${p.isHuman ? '<div class="you-tag">YOU</div>' : ''}
+      <div class="stall-name">${p.name}</div>
+      <div class="stall-coins">🪙 ${p.coins}</div>
+      <div class="stall-counters">
+        ${p.counters.map(c=>miniCounterHTML(c)).join('')}
+      </div>
+      <div class="stall-sold">Sold: ${p.soldPile.length}</div>
+    </div>`;
+  });
+  strip.innerHTML = html;
+}
+
+function renderMain(){
+  const panel = document.getElementById('mainPanel');
+
+  if (ST.phase==='intro'){
+    panel.innerHTML = `
+      <div class="panel-title">Welcome, Chef</div>
+      <div class="panel-msg">
+        Three nights. Four turns each night. Draft ingredients, cook them into dishes, and race customers
+        down the lane before your rivals do. The lowest-numbered stall sells first — and selling moves you
+        closer to that spot. Most coins by the end of Night 3 wins.
+      </div>
+      <div style="text-align:center;">
+        <button class="btn btn-begin" onclick="beginService()">🏮 Begin Service</button>
+      </div>`;
+    return;
+  }
+
+  if (ST.phase==='draft'){
+    const p = ST.players[0];
+    panel.innerHTML = `
+      <div class="panel-title">Step 1 — Draft</div>
+      <div class="panel-msg">Pick ONE card to draft from your hand. Everyone reveals together.</div>
+      <div class="hand-row">
+        ${p.hand.map((c,i)=>`
+          <div class="ing-card" onclick="humanDraft(${i})">
+            <div class="ic-emoji">${ING_INFO[c].emoji}</div>
+            <div class="ic-name">${ING_INFO[c].name}</div>
+          </div>`).join('')}
+      </div>`;
+    return;
+  }
+
+  if (ST.phase==='cook'){
+    const p = ST.players[0];
+    const card = p.drafted;
+    if (!card){
+      panel.innerHTML = `<div class="panel-title">Step 2 — Cook</div>
+        <div class="resolving-note">Heading to the customer line...</div>`;
+      return;
+    }
+    panel.innerHTML = `
+      <div class="panel-title">Step 2 — Cook</div>
+      <div class="panel-msg">You drafted <b>${ING_INFO[card].emoji} ${ING_INFO[card].name}</b>. Add it to a counter, or toss it in the Wok for 1 coin.</div>
+      <div class="cook-targets">
+        ${p.counters.map((counter, idx) => {
+          const full = counter.length>=3;
+          const hyp = [...counter, card];
+          const willComplete = !full && findCompletedRecipe(hyp);
+          return `<div class="cook-target ${full?'disabled':''}" onclick="${full?'':'humanCook('+idx+')'}">
+            <div class="ct-title">Counter ${idx+1}${willComplete?' ✓ DISH!':''}</div>
+            <div class="ct-cards">${counter.map(c=>ING_INFO[c].emoji).join('') || '&nbsp;'}</div>
+          </div>`;
+        }).join('')}
+        <div class="cook-target wok" onclick="humanCook('wok')">
+          <div class="ct-title">🔥 The Wok</div>
+          <div class="ct-cards">+1 coin</div>
+        </div>
+      </div>`;
+    return;
+  }
+
+  if (ST.phase==='customers'){
+    if (!ST.currentCustomer){
+      panel.innerHTML = `<div class="panel-title">Step 3 — Customers</div>
+        <div class="resolving-note">All customers served. Wrapping up the turn...</div>`;
+      return;
+    }
+    const ct = customerInfo(ST.currentCustomer);
+    let body = '';
+    if (ST.pendingHumanSale){
+      const {elig} = ST.pendingHumanSale;
+      body = `<div class="sell-btns">
+        ${elig.dish ? `<button class="btn btn-sell" onclick="humanSellChoice('dish')">Sell ${elig.dish.recipe.name} (+${elig.dish.recipe.price}${ct.special==='DISH_ONLY'?'+'+ct.bonus:''})</button>` : ''}
+        ${elig.snack ? `<button class="btn btn-sell" onclick="humanSellChoice('snack')">Sell Street Snack (+3${ct.special==='SNACK_ONLY'?'+'+ct.bonus:''})</button>` : ''}
+        <button class="btn btn-pass" onclick="humanSellChoice('pass')">Pass</button>
+      </div>`;
+    } else if (ST.currentCustomer==='critic'){
+      body = `<div class="resolving-note">The Food Critic is touring the whole market...</div>`;
+    } else {
+      body = `<div class="resolving-note">Resolving down the lane, starting at Stall 1...</div>`;
+    }
+    panel.innerHTML = `
+      <div class="panel-title">Step 3 — Customers</div>
+      <div class="customer-card">
+        <div class="cc-emoji">${ct.emoji}</div>
+        <div class="cc-name">${ct.name}</div>
+        <div class="cc-rule">${ct.craves ? `Craves <b>${ING_INFO[ct.craves].name}</b>` : ct.rule}</div>
+      </div>
+      ${body}`;
+    return;
+  }
+
+  if (ST.phase==='over'){
+    panel.innerHTML = `<div class="panel-title">Market's Closed</div>
+      <div class="panel-msg">See the final tally below — or click New Game to reopen the stalls.</div>`;
+  }
+}
+
+function renderLog(){
+  const log = document.getElementById('logPanel');
+  log.innerHTML = ST.log.slice(-8).map(l=>`<div>${l}</div>`).join('');
+  log.scrollTop = log.scrollHeight;
+}
+
+function renderStats(){
+  const row = document.getElementById('statRow');
+  if (ST.phase==='intro'){ row.innerHTML=''; return; }
+  row.innerHTML = `
+    <div class="stat-pill">Ingredient deck: ${ST.ingDeck.length}</div>
+    <div class="stat-pill">Wok pile: ${ST.ingDiscard.length}</div>
+    <div class="stat-pill">Customers left: ${ST.custDeck.length}</div>
+    <div class="stat-pill">Walked away: ${ST.custWalked.length}</div>
+    <div class="stat-pill">Your Specialty: ${ST.players[0].specialty.name} 🤫</div>
+  `;
+}
+
+function addLog(msg){ ST.log.push(msg); }
+
+function beginService(){
+  dealHands();
+  startDraftPhase();
+}
+
+newGame();
+</script>
+</body>
+</html>
