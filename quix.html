@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QUIX — Classroom Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+:root {
+  --ink:    #23203A;
+  --cream:  #FBF5E9;
+  --ember:  #FF6B35;
+  --violet: #6C3FC9;
+  --emerald:#3DBD5D;
+  --pink:   #E0379B;
+  --amber:  #FFAA2B;
+  --cyan:   #3BB8DE;
+  --red-c:  #E74C3C; --red-l:   #FDECEA;
+  --yel-c:  #D4AC0D; --yel-l:   #FFFBEA;
+  --grn-c:  #1E8449; --grn-l:   #EAFAF1;
+  --blu-c:  #2471A3; --blu-l:   #EBF5FB;
+}
+
+body {
+  background:var(--cream); color:var(--ink);
+  font-family:'Space Grotesk',sans-serif;
+  min-height:100vh; padding:18px 20px 40px;
+  user-select:none;
+}
+
+.header { text-align:center; margin-bottom:18px; }
+.header-logo {
+  font-family:'Archivo Black',sans-serif;
+  font-size:3rem; letter-spacing:0.22em; line-height:1;
+  color:var(--ink); text-shadow:5px 5px 0 var(--cyan);
+}
+.header-sub {
+  font-size:0.8rem; font-weight:600; opacity:0.5;
+  letter-spacing:0.14em; text-transform:uppercase; margin-top:4px;
+}
+
+.scorecard {
+  background:#fff; border:3px solid var(--ink);
+  box-shadow:6px 6px 0 var(--ink); border-radius:16px;
+  padding:14px; margin-bottom:16px; overflow-x:auto;
+}
+.sc-grid {
+  display:grid;
+  grid-template-columns: 68px repeat(11,1fr) 58px;
+  gap:4px; min-width:680px;
+}
+.sc-header-label {
+  font-family:'Archivo Black',sans-serif; font-size:0.58rem;
+  letter-spacing:0.14em; text-transform:uppercase; opacity:0.4;
+  display:flex; align-items:center; justify-content:center;
+}
+.sc-num-header {
+  font-family:'Archivo Black',sans-serif; font-size:0.7rem;
+  text-align:center; opacity:0.35; padding:2px 0 6px;
+}
+.sc-score-header {
+  font-family:'Archivo Black',sans-serif; font-size:0.58rem;
+  letter-spacing:0.1em; text-transform:uppercase; opacity:0.4;
+  text-align:center; display:flex; align-items:center; justify-content:center;
+}
+.sc-sep { grid-column:1/-1; height:6px; }
+
+.sc-label {
+  font-family:'Archivo Black',sans-serif; font-size:0.95rem;
+  letter-spacing:0.08em; display:flex; align-items:center;
+  justify-content:center; border-radius:8px; padding:4px 6px;
+  border:2.5px solid var(--ink);
+}
+.sc-label.red    { background:var(--red-l); color:var(--red-c); }
+.sc-label.yellow { background:var(--yel-l); color:var(--yel-c); }
+.sc-label.green  { background:var(--grn-l); color:var(--grn-c); }
+.sc-label.blue   { background:var(--blu-l); color:var(--blu-c); }
+
+.sc-cell {
+  height:58px; border-radius:8px; border:2.5px solid var(--ink);
+  display:flex; flex-direction:column; align-items:center;
+  justify-content:center; cursor:default; position:relative;
+  transition:transform 0.1s, box-shadow 0.1s;
+  background:var(--cream);
+}
+.sc-cell .cell-num { font-family:'Archivo Black',sans-serif; font-size:1.05rem; line-height:1; }
+.sc-cell .cell-sub { font-size:0.55rem; opacity:0.45; margin-top:2px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; }
+
+.sc-cell.marked { border-color:currentColor; cursor:default; }
+.sc-cell.marked .cell-num { opacity:0; }
+.sc-cell.marked::after { content:'✕'; font-family:'Archivo Black',sans-serif; font-size:1.5rem; position:absolute; }
+.sc-cell.red.marked    { background:var(--red-l);  color:var(--red-c); }
+.sc-cell.yellow.marked { background:var(--yel-l);  color:var(--yel-c); }
+.sc-cell.green.marked  { background:var(--grn-l);  color:var(--grn-c); }
+.sc-cell.blue.marked   { background:var(--blu-l);  color:var(--blu-c); }
+
+.sc-cell.lock-cell.locked { border-style:solid; }
+.sc-cell.lock-cell.locked::after { content:'🔒'; font-size:1.1rem; }
+
+.sc-cell.skipped { opacity:0.28; cursor:not-allowed; }
+
+.sc-cell.avail-white {
+  border-color:var(--amber); border-width:3px;
+  box-shadow:0 0 0 2px var(--amber);
+  cursor:pointer; animation:pulseAmber 1.4s ease infinite;
+}
+.sc-cell.avail-color {
+  cursor:pointer; box-shadow:0 0 0 3px currentColor; border-width:3px;
+}
+.sc-cell.avail-color.red    { border-color:var(--red-c);  color:var(--red-c);  }
+.sc-cell.avail-color.yellow { border-color:var(--yel-c);  color:var(--yel-c);  }
+.sc-cell.avail-color.green  { border-color:var(--grn-c);  color:var(--grn-c);  }
+.sc-cell.avail-color.blue   { border-color:var(--blu-c);  color:var(--blu-c);  }
+
+.sc-cell.avail-white:hover, .sc-cell.avail-color:hover { transform:scale(1.08); }
+
+@keyframes pulseAmber {
+  0%,100% { box-shadow:0 0 0 2px var(--amber); }
+  50%     { box-shadow:0 0 0 5px var(--amber); }
+}
+
+.sc-row-score {
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Archivo Black',sans-serif; font-size:1.2rem;
+  border-radius:8px; border:2.5px solid var(--ink);
+}
+.sc-row-score.red    { background:var(--red-l);  color:var(--red-c); }
+.sc-row-score.yellow { background:var(--yel-l);  color:var(--yel-c); }
+.sc-row-score.green  { background:var(--grn-l);  color:var(--grn-c); }
+.sc-row-score.blue   { background:var(--blu-l);  color:var(--blu-c); }
+
+.bottom-panel { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+
+.dice-panel {
+  background:#fff; border:2.5px solid var(--ink);
+  box-shadow:4px 4px 0 var(--ink); border-radius:14px; padding:16px;
+}
+.dice-title {
+  font-family:'Archivo Black',sans-serif; font-size:0.62rem;
+  letter-spacing:0.16em; text-transform:uppercase; opacity:0.45; margin-bottom:12px;
+}
+.dice-groups { display:flex; flex-direction:column; gap:10px; }
+.dice-group  { display:flex; align-items:center; gap:8px; }
+.dg-label { font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; opacity:0.5; min-width:50px; }
+.dice-row { display:flex; gap:8px; }
+.die {
+  width:50px; height:50px; border-radius:10px;
+  border:3px solid var(--ink); box-shadow:3px 3px 0 var(--ink);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Archivo Black',sans-serif; font-size:1.5rem;
+  transition:transform 0.15s; flex-shrink:0;
+}
+.die.white  { background:#fff; color:var(--ink); }
+.die.red    { background:var(--red-c); color:#fff; }
+.die.yellow { background:#D4AC0D; color:#fff; }
+.die.green  { background:var(--grn-c); color:#fff; }
+.die.blue   { background:var(--blu-c); color:#fff; }
+.die.locked { opacity:0.3; }
+
+@keyframes dieRoll {
+  0%   { transform:rotate(0deg) scale(1); }
+  25%  { transform:rotate(-15deg) scale(1.15); }
+  50%  { transform:rotate(10deg) scale(0.9); }
+  75%  { transform:rotate(-5deg) scale(1.1); }
+  100% { transform:rotate(0deg) scale(1); }
+}
+.die.rolling { animation:dieRoll 0.4s ease; }
+
+.white-sum {
+  font-family:'Archivo Black',sans-serif; font-size:0.82rem;
+  background:var(--amber); color:var(--ink);
+  border:2px solid var(--ink); border-radius:6px; padding:4px 10px;
+  margin-top:4px; display:inline-block;
+}
+
+.control-panel { display:flex; flex-direction:column; gap:10px; }
+
+.btn {
+  font-family:'Archivo Black',sans-serif; font-size:0.82rem;
+  letter-spacing:0.07em; padding:12px 16px; width:100%;
+  border:3px solid var(--ink); border-radius:10px;
+  cursor:pointer; box-shadow:4px 4px 0 var(--ink);
+  transition:transform 0.08s, box-shadow 0.08s; text-transform:uppercase;
+}
+.btn:hover:not(:disabled) { filter:brightness(1.06); }
+.btn:active:not(:disabled) { transform:translate(2px,2px); box-shadow:2px 2px 0 var(--ink); }
+.btn:disabled { opacity:0.35; cursor:not-allowed; }
+.btn-roll    { background:var(--violet); color:#fff; font-size:1rem; }
+.btn-endturn { background:var(--emerald); color:#fff; }
+.btn-new     { background:#fff; color:var(--ink); }
+
+.feedback {
+  background:var(--ink); color:var(--cream);
+  border:2.5px solid var(--ink); border-radius:10px;
+  padding:11px 14px; font-size:0.84rem; font-weight:600;
+  text-align:center; line-height:1.5; min-height:54px;
+  display:flex; align-items:center; justify-content:center;
+  transition:background 0.2s;
+}
+.feedback.good   { background:#27894A; color:#fff; }
+.feedback.warn   { background:var(--amber); color:var(--ink); }
+.feedback.bad    { background:var(--pink); color:#fff; }
+.feedback.locked { background:var(--violet); color:#fff; }
+
+.score-penalties { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.score-box, .penalty-box {
+  background:#fff; border:2.5px solid var(--ink);
+  box-shadow:3px 3px 0 var(--ink); border-radius:10px;
+  padding:12px; text-align:center;
+}
+.sp-label {
+  font-family:'Archivo Black',sans-serif; font-size:0.58rem;
+  letter-spacing:0.18em; text-transform:uppercase; opacity:0.5; margin-bottom:4px;
+}
+.score-val { font-family:'Archivo Black',sans-serif; font-size:2.2rem; line-height:1; color:var(--violet); }
+.penalty-dots { display:flex; gap:6px; justify-content:center; margin-top:4px; }
+.pdot { width:18px; height:18px; border-radius:50%; border:2.5px solid var(--ink); transition:background 0.2s; }
+.pdot.filled { background:var(--pink); }
+
+.rules-strip {
+  background:#fff; border:2.5px solid var(--ink);
+  box-shadow:3px 3px 0 var(--ink); border-radius:10px;
+  padding:12px 16px; font-size:0.74rem; line-height:1.6; font-weight:500;
+  margin-top:14px; display:grid; grid-template-columns:1fr 1fr; gap:6px 20px;
+}
+.rules-strip .rh {
+  grid-column:1/-1; font-family:'Archivo Black',sans-serif; font-size:0.68rem;
+  letter-spacing:0.1em; text-transform:uppercase; color:var(--cyan); margin-bottom:3px;
+}
+
+.gameover { display:none; position:fixed; inset:0;
+  background:rgba(35,32,58,0.78); z-index:100;
+  align-items:center; justify-content:center; }
+.gameover.show { display:flex; }
+.go-box {
+  background:var(--cream); border:4px solid var(--ink);
+  box-shadow:10px 10px 0 var(--ink); border-radius:20px;
+  padding:36px 40px; text-align:center; max-width:400px; width:90%;
+}
+.go-title { font-family:'Archivo Black',sans-serif; font-size:2rem; letter-spacing:0.08em; margin-bottom:6px; }
+.go-sub { font-size:0.84rem; opacity:0.6; margin-bottom:22px; }
+.go-scores { margin-bottom:24px; font-size:0.9rem; }
+.go-scores table { width:100%; border-collapse:collapse; }
+.go-scores td { padding:7px 10px; border-bottom:1.5px solid rgba(35,32,58,0.15); font-weight:600; }
+.go-scores td:last-child { text-align:right; font-family:'Archivo Black',sans-serif; font-size:1rem; }
+.go-scores tr.total-row td { font-family:'Archivo Black',sans-serif; font-size:1.1rem; border-bottom:none; border-top:2.5px solid var(--ink); }
+.btn-again {
+  font-family:'Archivo Black',sans-serif; font-size:0.9rem;
+  letter-spacing:0.08em; padding:14px 28px;
+  border:3px solid var(--ink); border-radius:10px;
+  cursor:pointer; box-shadow:5px 5px 0 var(--ink);
+  background:var(--violet); color:#fff; text-transform:uppercase;
+}
+.btn-again:hover { filter:brightness(1.1); }
+.btn-again:active { transform:translate(2px,2px); box-shadow:3px 3px 0 var(--ink); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">QUIX</div>
+  <div class="header-sub">Classroom Demo &mdash; Game Design Studio</div>
+</div>
+
+<div class="scorecard">
+  <div class="sc-grid" id="scGrid"></div>
+</div>
+
+<div class="bottom-panel">
+  <div class="dice-panel">
+    <div class="dice-title">&middot; Dice Roll &middot;</div>
+    <div class="dice-groups">
+      <div class="dice-group">
+        <span class="dg-label">White</span>
+        <div class="dice-row">
+          <div class="die white" id="dW1">&mdash;</div>
+          <div class="die white" id="dW2">&mdash;</div>
+        </div>
+        <div id="whiteSumBadge"></div>
+      </div>
+      <div class="dice-group">
+        <span class="dg-label">Color</span>
+        <div class="dice-row">
+          <div class="die red"    id="dRed">&mdash;</div>
+          <div class="die yellow" id="dYel">&mdash;</div>
+          <div class="die green"  id="dGrn">&mdash;</div>
+          <div class="die blue"   id="dBlu">&mdash;</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="control-panel">
+    <div class="score-penalties">
+      <div class="score-box">
+        <div class="sp-label">Total Score</div>
+        <div class="score-val" id="totalScore">0</div>
+      </div>
+      <div class="penalty-box">
+        <div class="sp-label">Penalties (&minus;5 each)</div>
+        <div class="penalty-dots" id="penaltyDots">
+          <div class="pdot" id="p0"></div>
+          <div class="pdot" id="p1"></div>
+          <div class="pdot" id="p2"></div>
+          <div class="pdot" id="p3"></div>
+        </div>
+      </div>
+    </div>
+    <div class="feedback neutral" id="feedback">Roll the dice to begin your turn.</div>
+    <button class="btn btn-roll"    id="btnRoll"    onclick="rollDice()">🎲 Roll Dice</button>
+    <button class="btn btn-endturn" id="btnEndTurn" onclick="endTurn()" disabled>✓ End Turn</button>
+    <button class="btn btn-new"                     onclick="newGame()">&#8634; New Game</button>
+  </div>
+</div>
+
+<div class="rules-strip">
+  <span class="rh">&middot; How to Play &middot;</span>
+  <span>🎲 Roll all 6 dice each turn.</span>
+  <span>🟡 <strong>White sum:</strong> mark that number in any row (gold glow).</span>
+  <span>🎨 <strong>Color combo:</strong> white die + color die in that row's color.</span>
+  <span>🔒 <strong>Lock a row:</strong> 5+ marks, then mark the final number.</span>
+  <span>⚠️ Mark <strong>nothing</strong> this turn? Take a penalty (&minus;5).</span>
+  <span>🏁 Game ends when 2 rows lock or you collect 4 penalties.</span>
+  <span>📈 Score: marks per row = 1,3,6,10,15,21&hellip; (triangle numbers!)</span>
+</div>
+
+<div class="gameover" id="gameover">
+  <div class="go-box">
+    <div class="go-title" id="goTitle">Game Over!</div>
+    <div class="go-sub">Final Score Breakdown</div>
+    <div class="go-scores" id="goScores"></div>
+    <button class="btn-again" onclick="newGame()">Play Again</button>
+  </div>
+</div>
+
+<script>
+const ROW_DEFS = [
+  { key:'red',    name:'Red',    col:'red',    nums:[2,3,4,5,6,7,8,9,10,11,12] },
+  { key:'yellow', name:'Yellow', col:'yellow', nums:[2,3,4,5,6,7,8,9,10,11,12] },
+  { key:'green',  name:'Green',  col:'green',  nums:[12,11,10,9,8,7,6,5,4,3,2] },
+  { key:'blue',   name:'Blue',   col:'blue',   nums:[12,11,10,9,8,7,6,5,4,3,2] },
+];
+
+let G = {};
+
+function freshGame() {
+  return {
+    rows: { red:{marks:new Set(),locked:false}, yellow:{marks:new Set(),locked:false}, green:{marks:new Set(),locked:false}, blue:{marks:new Set(),locked:false} },
+    dice: {w1:0,w2:0,red:0,yellow:0,green:0,blue:0},
+    penalties:0, phase:'roll', whiteUsed:false, colorUsed:false, lockedCount:0, turnNum:0,
+    availWhite:[], availColor:[],
+  };
+}
+
+function newGame() {
+  G = freshGame();
+  document.getElementById('gameover').classList.remove('show');
+  renderAll();
+  setFeedback('neutral','Roll the dice to begin!');
+  document.getElementById('btnRoll').disabled = false;
+  document.getElementById('btnEndTurn').disabled = true;
+}
+
+function d6() { return Math.floor(Math.random()*6)+1; }
+
+function rollDice() {
+  G.phase='mark'; G.whiteUsed=false; G.colorUsed=false; G.turnNum++;
+  G.dice.w1=d6(); G.dice.w2=d6();
+  G.dice.red    = G.rows.red.locked    ? null : d6();
+  G.dice.yellow = G.rows.yellow.locked ? null : d6();
+  G.dice.green  = G.rows.green.locked  ? null : d6();
+  G.dice.blue   = G.rows.blue.locked   ? null : d6();
+  computeAvail();
+  renderAll();
+  const ws = G.dice.w1+G.dice.w2;
+  const colorOptions = G.availColor.map(a=>`${a.rowKey[0].toUpperCase()+a.rowKey.slice(1)}: ${a.num}`).join(' · ');
+  const msg = G.availWhite.length||G.availColor.length
+    ? `White sum ${ws}${G.availWhite.length?' — mark it anywhere (gold glow)':' — not available in any row'}.${colorOptions?' Color options: '+colorOptions+'.':''}`
+    : `White sum ${ws} — no marks available this turn. End turn to take a penalty.`;
+  setFeedback('neutral',msg);
+  document.getElementById('btnRoll').disabled=true;
+  document.getElementById('btnEndTurn').disabled=false;
+}
+
+function canMark(rowKey, idx) {
+  const row=G.rows[rowKey];
+  if(row.locked||row.marks.has(idx)) return false;
+  const rightmost=row.marks.size>0?Math.max(...row.marks):-1;
+  if(idx<=rightmost) return false;
+  if(idx===10&&row.marks.size<5) return false;
+  return true;
+}
+
+function numToIdx(rowKey,num) { return ROW_DEFS.find(r=>r.key===rowKey).nums.indexOf(num); }
+
+function computeAvail() {
+  const ws=G.dice.w1+G.dice.w2;
+  G.availWhite=[]; G.availColor=[];
+  for(const def of ROW_DEFS){
+    const rk=def.key;
+    if(G.rows[rk].locked) continue;
+    const wi=numToIdx(rk,ws);
+    if(wi!==-1&&canMark(rk,wi)) G.availWhite.push({rowKey:rk,idx:wi,num:ws});
+    const colorDie=G.dice[rk];
+    if(colorDie==null) continue;
+    for(const w of [G.dice.w1,G.dice.w2]){
+      const csum=w+colorDie;
+      const ci=numToIdx(rk,csum);
+      if(ci!==-1&&canMark(rk,ci)&&!G.availColor.some(a=>a.rowKey===rk&&a.idx===ci)){
+        G.availColor.push({rowKey:rk,idx:ci,num:csum,dieVal:colorDie});
+      }
+    }
+  }
+}
+
+function tryMark(rowKey,idx,phase) {
+  if(phase==='white'&&G.whiteUsed) return false;
+  if(phase==='color'&&G.colorUsed) return false;
+  if(!canMark(rowKey,idx)) return false;
+  const row=G.rows[rowKey];
+  const num=ROW_DEFS.find(r=>r.key===rowKey).nums[idx];
+  row.marks.add(idx);
+  if(phase==='white') G.whiteUsed=true;
+  if(phase==='color') G.colorUsed=true;
+  if(idx===10){
+    row.locked=true; G.lockedCount++;
+    const rowName=ROW_DEFS.find(r=>r.key===rowKey).name;
+    setFeedback('locked',`🔒 ${rowName} row is LOCKED! ${num} marked + lock bonus. ${G.lockedCount===1?'One more lock ends the game.':'Game over!'}`);
+    if(G.lockedCount>=2){endGame();return true;}
+  }
+  computeAvail(); renderAll();
+  return true;
+}
+
+function clickCell(rowKey,idx) {
+  if(G.phase!=='mark') return;
+  const isAvailWhite=!G.whiteUsed&&G.availWhite.some(a=>a.rowKey===rowKey&&a.idx===idx);
+  const isAvailColor=!G.colorUsed&&G.availColor.some(a=>a.rowKey===rowKey&&a.idx===idx);
+  if(!isAvailWhite&&!isAvailColor) return;
+  const phase=G.whiteUsed?'color':(isAvailWhite?'white':'color');
+  const done=tryMark(rowKey,idx,phase);
+  if(done&&G.phase!=='over'){
+    const num=ROW_DEFS.find(r=>r.key===rowKey).nums[idx];
+    const rowName=ROW_DEFS.find(r=>r.key===rowKey).name;
+    if(!G.rows[rowKey].locked){
+      setFeedback('good',`✓ Marked ${num} in ${rowName} (${phase} phase). ${(!G.whiteUsed||!G.colorUsed)&&(G.availWhite.length||G.availColor.length)?'More marks available — or End Turn.':'End Turn when ready.'}`);
+    }
+  }
+}
+
+function endTurn() {
+  if(G.phase==='over') return;
+  if(!G.whiteUsed&&!G.colorUsed){
+    G.penalties++; renderPenalties(); renderScore();
+    setFeedback('bad',`⚠️ No marks this turn — penalty! (${G.penalties}/4)`);
+    if(G.penalties>=4){endGame();return;}
+  }
+  G.phase='roll'; G.availWhite=[]; G.availColor=[];
+  renderAll();
+  document.getElementById('btnRoll').disabled=false;
+  document.getElementById('btnEndTurn').disabled=true;
+  if(G.penalties<4&&G.lockedCount<2) setFeedback('neutral','Roll the dice for your next turn!');
+}
+
+function rowMarkCount(rowKey){const row=G.rows[rowKey];return row.marks.size+(row.locked?1:0);}
+function rowScore(rowKey){const n=rowMarkCount(rowKey);return n*(n+1)/2;}
+function totalScore(){let s=0;for(const def of ROW_DEFS)s+=rowScore(def.key);return s-G.penalties*5;}
+
+function endGame() {
+  G.phase='over';
+  document.getElementById('btnRoll').disabled=true;
+  document.getElementById('btnEndTurn').disabled=true;
+  renderAll();
+  let html='<table>';
+  let grand=0;
+  for(const def of ROW_DEFS){const s=rowScore(def.key);grand+=s;html+=`<tr><td>${def.name}</td><td>${rowMarkCount(def.key)} marks</td><td>+${s}</td></tr>`;}
+  html+=`<tr><td colspan="2">Penalties (×${G.penalties})</td><td>−${G.penalties*5}</td></tr>`;
+  const total=grand-G.penalties*5;
+  html+=`<tr class="total-row"><td colspan="2">Total</td><td>${total}</td></tr></table>`;
+  document.getElementById('goTitle').textContent=total>=50?'🎉 Great Run!':'🏁 Game Over!';
+  document.getElementById('goScores').innerHTML=html;
+  document.getElementById('gameover').classList.add('show');
+}
+
+function renderAll(){renderScorecard();renderDice();renderScore();renderPenalties();}
+
+function renderScorecard() {
+  const grid=document.getElementById('scGrid');
+  grid.innerHTML='';
+  appendEl(grid,'div','sc-header-label','');
+  for(const def of ROW_DEFS[0].nums) appendEl(grid,'div','sc-num-header',def);
+  appendEl(grid,'div','sc-score-header','pts');
+  appendEl(grid,'div','sc-sep');
+  for(const def of ROW_DEFS){
+    const rk=def.key, row=G.rows[rk];
+    appendEl(grid,'div',`sc-label ${rk}`,def.name);
+    const rightmost=row.marks.size>0?Math.max(...row.marks):-1;
+    def.nums.forEach((num,idx)=>{
+      const isMarked=row.marks.has(idx), isSkipped=!isMarked&&idx<rightmost;
+      const isLockCell=idx===10, isLocked=row.locked;
+      const isAvailW=G.availWhite.some(a=>a.rowKey===rk&&a.idx===idx)&&!G.whiteUsed;
+      const isAvailC=G.availColor.some(a=>a.rowKey===rk&&a.idx===idx)&&!G.colorUsed;
+      let classes=`sc-cell ${rk}`;
+      if(isMarked) classes+=' marked';
+      if(isSkipped) classes+=' skipped';
+      if(isLockCell) classes+=' lock-cell';
+      if(isLockCell&&isLocked) classes+=' locked';
+      if(isAvailW&&!isMarked) classes+=' avail-white';
+      if(isAvailC&&!isMarked) classes+=' avail-color';
+      const cell=appendEl(grid,'div',classes);
+      if(!isMarked){
+        appendEl(cell,'div','cell-num',num);
+        if(isLockCell&&!isLocked) appendEl(cell,'div','cell-sub','5+ to unlock');
+      }
+      if((isAvailW||isAvailC)&&!isMarked){cell.style.cursor='pointer';cell.onclick=()=>clickCell(rk,idx);}
+    });
+    appendEl(grid,'div',`sc-row-score ${rk}`,rowScore(rk)||'—');
+    appendEl(grid,'div','sc-sep');
+  }
+}
+
+function renderDice() {
+  const ids=['dW1','dW2','dRed','dYel','dGrn','dBlu'];
+  const vals=[G.dice.w1,G.dice.w2,G.dice.red,G.dice.yellow,G.dice.green,G.dice.blue];
+  const locked=[false,false,G.rows.red.locked,G.rows.yellow.locked,G.rows.green.locked,G.rows.blue.locked];
+  ids.forEach((id,i)=>{const el=document.getElementById(id);el.textContent=vals[i]??'—';el.classList.toggle('locked',locked[i]);});
+  const ws=G.phase!=='roll'?G.dice.w1+G.dice.w2:null;
+  document.getElementById('whiteSumBadge').innerHTML=ws?`<div class="white-sum">Sum: ${ws}</div>`:'';
+}
+
+function renderScore(){document.getElementById('totalScore').textContent=totalScore();}
+function renderPenalties(){for(let i=0;i<4;i++)document.getElementById(`p${i}`).classList.toggle('filled',i<G.penalties);}
+
+function appendEl(parent,tag,cls='',text=''){
+  const el=document.createElement(tag);
+  if(cls) el.className=cls;
+  if(text!=='') el.textContent=text;
+  parent.appendChild(el);
+  return el;
+}
+
+function setFeedback(cls,msg){const el=document.getElementById('feedback');el.className='feedback '+cls;el.textContent=msg;}
+
+newGame();
+</script>
+</body>
+</html>
